@@ -2,21 +2,26 @@
 
 import React from 'react';
 import { TeamId, TeamState } from '@/types/game';
-import { ArrowRightLeft, Sparkles, UserCheck } from 'lucide-react';
+import { ArrowRightLeft, Sparkles, UserCheck, Zap } from 'lucide-react';
 import { soundEngine } from '@/utils/soundEngine';
+import { TurnTimer } from '@/components/ui/TurnTimer';
 
 interface Props {
   turnTeam: TeamId;
   teams: Record<TeamId, TeamState>;
   onSwitchTurn: () => void;
   actionPrompt?: string;
+  isStealActive?: boolean;
+  showTimer?: boolean;
 }
 
 export const TurnBanner: React.FC<Props> = ({
   turnTeam,
   teams,
   onSwitchTurn,
-  actionPrompt = "Step up to the Smart Board to make your spatial decision!"
+  actionPrompt = "Step up to the Smart Board to make your spatial decision!",
+  isStealActive = false,
+  showTimer = true
 }) => {
   const currentTeam = teams[turnTeam];
   const isTerra = turnTeam === 'terraformers';
@@ -47,6 +52,12 @@ export const TurnBanner: React.FC<Props> = ({
             }`}>
               SMART BOARD ACTIVE
             </span>
+            {isStealActive && (
+              <span className="text-[10px] px-2.5 py-0.5 rounded-full font-black bg-rose-400 text-slate-950 border-2 border-slate-900 shadow-[2px_2px_0px_0px_#0f172a] animate-bounce flex items-center gap-1">
+                <Zap className="w-3 h-3 fill-yellow-300 text-slate-950" />
+                STEAL CHANCE
+              </span>
+            )}
           </div>
           <p className="text-xs sm:text-sm text-slate-800 font-bold">
             {actionPrompt}
@@ -54,8 +65,16 @@ export const TurnBanner: React.FC<Props> = ({
         </div>
       </div>
 
-      {/* Manual Turn Switch Button for Smart Board */}
-      <div className="flex items-center gap-2">
+      {/* Timer & Turn Switch Controls */}
+      <div className="flex items-center flex-wrap gap-2">
+        {showTimer && (
+          <TurnTimer
+            turnTeam={turnTeam}
+            onTimeout={onSwitchTurn}
+            defaultSeconds={40}
+          />
+        )}
+
         <button
           onClick={() => {
             soundEngine.playClick();

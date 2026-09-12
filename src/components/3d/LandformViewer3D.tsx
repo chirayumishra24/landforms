@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { LandformType } from '@/types/game';
-import { RotateCw, ZoomIn, ZoomOut, Sparkles, Compass, Eye } from 'lucide-react';
+import { RotateCw, ZoomIn, ZoomOut, Sparkles, Compass, Eye, Sun, Sunset, CloudFog, Layers } from 'lucide-react';
 import { soundEngine } from '@/utils/soundEngine';
 
 interface Props {
@@ -20,10 +20,21 @@ export const LandformViewer3D: React.FC<Props> = ({
   const mountRef = useRef<HTMLDivElement>(null);
   const [autoRotate, setAutoRotate] = useState(true);
   const [activeHotspot, setActiveHotspot] = useState<string | null>(null);
+  const [viewPreset, setViewPreset] = useState<'hero' | 'satellite' | 'profile'>('hero');
+  const [lightingMode, setLightingMode] = useState<'day' | 'sunset' | 'mist'>('day');
 
   const groupRef = useRef<THREE.Group | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const autoRotateRef = useRef(autoRotate);
+
+  const sceneRef = useRef<THREE.Scene | null>(null);
+  const ambientLightRef = useRef<THREE.AmbientLight | null>(null);
+  const sunLightRef = useRef<THREE.DirectionalLight | null>(null);
+  const fillLightRef = useRef<THREE.DirectionalLight | null>(null);
+
+  const targetCamPosRef = useRef<THREE.Vector3>(new THREE.Vector3(0, 9.5, 14.5));
+  const targetCamLookRef = useRef<THREE.Vector3>(new THREE.Vector3(0, 1.2, 0));
+  const currentCamLookRef = useRef<THREE.Vector3>(new THREE.Vector3(0, 1.2, 0));
 
   useEffect(() => {
     autoRotateRef.current = autoRotate;
@@ -67,8 +78,10 @@ export const LandformViewer3D: React.FC<Props> = ({
     container.appendChild(renderer.domElement);
 
     // Warm Atmospheric Lighting
+    sceneRef.current = scene;
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
     scene.add(ambientLight);
+    ambientLightRef.current = ambientLight;
 
     const sunLight = new THREE.DirectionalLight(0xfff7ed, 2.0);
     sunLight.position.set(14, 22, 12);
@@ -79,10 +92,12 @@ export const LandformViewer3D: React.FC<Props> = ({
     sunLight.shadow.camera.far = 50;
     sunLight.shadow.bias = -0.001;
     scene.add(sunLight);
+    sunLightRef.current = sunLight;
 
     const fillLight = new THREE.DirectionalLight(0x38bdf8, 0.6);
     fillLight.position.set(-12, 10, -10);
     scene.add(fillLight);
+    fillLightRef.current = fillLight;
 
     const hemiLight = new THREE.HemisphereLight(0xe0f2fe, 0x1e293b, 0.7);
     scene.add(hemiLight);
@@ -860,6 +875,14 @@ export const LandformViewer3D: React.FC<Props> = ({
         dioramaGroup.rotation.y += 0.005;
       }
 
+      if (targetCamPosRef.current && camera) {
+        camera.position.lerp(targetCamPosRef.current, 0.06);
+      }
+      if (targetCamLookRef.current && camera) {
+        currentCamLookRef.current.lerp(targetCamLookRef.current, 0.06);
+        camera.lookAt(currentCamLookRef.current);
+      }
+
       animItems.forEach(item => item.update(elapsedTime));
       renderer.render(scene, camera);
     };
@@ -910,11 +933,51 @@ export const LandformViewer3D: React.FC<Props> = ({
     };
   }, [landform]);
 
+  const handleSelectPreset = (preset: 'hero' | 'satellite' | 'profile') => {
+    soundEngine.playClick();
+    setViewPreset(preset);
+    if (preset === 'satellite') {
+      targetCamPosRef.current.set(0, 18.5, 0.05);
+      targetCamLookRef.current.set(0, 0, 0);
+    } else if (preset === 'profile') {
+      targetCamPosRef.current.set(0, 3.2, 15.5);
+      targetCamLookRef.current.set(0, 1.5, 0);
+    } else {
+      targetCamPosRef.current.set(0, 9.5, 14.5);
+      targetCamLookRef.current.set(0, 1.2, 0);
+    }
+  };
+
+  const handleSelectLighting = (mode: 'day' | 'sunset' | 'mist') => {
+    soundEngine.playClick();
+    setLightingMode(mode);
+    if (!sunLightRef.current || !ambientLightRef.current || !sceneRef.current) return;
+    if (mode === 'day') {
+      sunLightRef.current.color.setHex(0xfff7ed);
+      sunLightRef.current.intensity = 2.0;
+      ambientLightRef.current.color.setHex(0xffffff);
+      ambientLightRef.current.intensity = 0.9;
+      sceneRef.current.fog = null;
+    } else if (mode === 'sunset') {
+      sunLightRef.current.color.setHex(0xf97316);
+      sunLightRef.current.intensity = 2.6;
+      ambientLightRef.current.color.setHex(0xfef08a);
+      ambientLightRef.current.intensity = 0.75;
+      sceneRef.current.fog = new THREE.FogExp2(0xfbcfe8, 0.025);
+    } else if (mode === 'mist') {
+      sunLightRef.current.color.setHex(0x93c5fd);
+      sunLightRef.current.intensity = 1.3;
+      ambientLightRef.current.color.setHex(0xe0f2fe);
+      ambientLightRef.current.intensity = 1.1;
+      sceneRef.current.fog = new THREE.FogExp2(0xbae6fd, 0.038);
+    }
+  };
+
   const handleZoom = (inDir: boolean) => {
     soundEngine.playClick();
     if (cameraRef.current) {
       const step = inDir ? -1.5 : 1.5;
-      cameraRef.current.position.z = Math.max(7, Math.min(19, cameraRef.current.position.z + step));
+      targetCamPosRef.current.z = Math.max(7, Math.min(19, targetCamPosRef.current.z + step));
     }
   };
 
@@ -954,38 +1017,101 @@ export const LandformViewer3D: React.FC<Props> = ({
       <div ref={mountRef} className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing overflow-hidden flex items-center justify-center" />
 
       {/* Top Controls Overlay */}
-      <div className="relative z-20 p-3 flex items-center justify-between pointer-events-auto">
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-white/95 backdrop-blur-md border-2 border-slate-900 text-xs font-black text-slate-950 shadow-[2px_2px_0px_0px_#0f172a]">
+      <div className="relative z-20 p-2 sm:p-3 flex flex-wrap items-center justify-between gap-2 pointer-events-auto">
+        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-white/95 backdrop-blur-md border-2 border-slate-900 text-xs font-black text-slate-950 shadow-[2px_2px_0px_0px_#0f172a]">
           <Compass className="w-4 h-4 text-blue-600 animate-spin" />
-          <span className="capitalize text-sm">{landform} 3D Diorama</span>
+          <span className="capitalize text-xs sm:text-sm">{landform} 3D Diorama</span>
         </div>
 
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center flex-wrap gap-1.5">
+          {/* Camera View Presets */}
+          <div className="flex items-center bg-white/95 backdrop-blur-md p-0.5 rounded-xl border-2 border-slate-900 shadow-[2px_2px_0px_0px_#0f172a]">
+            <button
+              onClick={() => handleSelectPreset('hero')}
+              className={`px-2 py-1 rounded-lg text-[11px] font-black transition ${
+                viewPreset === 'hero' ? 'bg-blue-300 text-blue-950 border border-slate-900' : 'text-slate-700 hover:bg-slate-100'
+              }`}
+              title="Isometric 3D Hero View"
+            >
+              🏔️ 3D
+            </button>
+            <button
+              onClick={() => handleSelectPreset('satellite')}
+              className={`px-2 py-1 rounded-lg text-[11px] font-black transition ${
+                viewPreset === 'satellite' ? 'bg-blue-300 text-blue-950 border border-slate-900' : 'text-slate-700 hover:bg-slate-100'
+              }`}
+              title="Top-Down Satellite View"
+            >
+              🛰️ Top
+            </button>
+            <button
+              onClick={() => handleSelectPreset('profile')}
+              className={`px-2 py-1 rounded-lg text-[11px] font-black transition ${
+                viewPreset === 'profile' ? 'bg-blue-300 text-blue-950 border border-slate-900' : 'text-slate-700 hover:bg-slate-100'
+              }`}
+              title="Elevation Slope Profile View"
+            >
+              📐 Profile
+            </button>
+          </div>
+
+          {/* Lighting Mode Group */}
+          <div className="flex items-center bg-white/95 backdrop-blur-md p-0.5 rounded-xl border-2 border-slate-900 shadow-[2px_2px_0px_0px_#0f172a]">
+            <button
+              onClick={() => handleSelectLighting('day')}
+              className={`p-1 rounded-lg text-[11px] font-black transition ${
+                lightingMode === 'day' ? 'bg-amber-300 text-slate-950 border border-slate-900' : 'text-slate-600 hover:bg-slate-100'
+              }`}
+              title="Bright Daylight"
+            >
+              <Sun className="w-3.5 h-3.5 text-amber-600" />
+            </button>
+            <button
+              onClick={() => handleSelectLighting('sunset')}
+              className={`p-1 rounded-lg text-[11px] font-black transition ${
+                lightingMode === 'sunset' ? 'bg-orange-300 text-slate-950 border border-slate-900' : 'text-slate-600 hover:bg-slate-100'
+              }`}
+              title="Sunset / Golden Hour"
+            >
+              <Sunset className="w-3.5 h-3.5 text-orange-600" />
+            </button>
+            <button
+              onClick={() => handleSelectLighting('mist')}
+              className={`p-1 rounded-lg text-[11px] font-black transition ${
+                lightingMode === 'mist' ? 'bg-cyan-300 text-slate-950 border border-slate-900' : 'text-slate-600 hover:bg-slate-100'
+              }`}
+              title="Alpine Mist / Fog"
+            >
+              <CloudFog className="w-3.5 h-3.5 text-cyan-700" />
+            </button>
+          </div>
+
+          {/* Utility Buttons */}
           <button
             onClick={() => {
               soundEngine.playClick();
               setAutoRotate(prev => !prev);
             }}
-            className={`p-2 rounded-xl border-2 border-slate-900 shadow-[2px_2px_0px_0px_#0f172a] text-xs font-black transition active:translate-x-0.5 active:translate-y-0.5 active:shadow-none ${
+            className={`p-1.5 rounded-xl border-2 border-slate-900 shadow-[2px_2px_0px_0px_#0f172a] text-xs font-black transition active:translate-x-0.5 active:translate-y-0.5 active:shadow-none ${
               autoRotate ? 'bg-yellow-300 text-slate-950' : 'bg-white text-slate-700 hover:bg-slate-100'
             }`}
             title="Toggle Auto-Rotation"
           >
-            <RotateCw className="w-4 h-4" />
+            <RotateCw className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={() => handleZoom(true)}
-            className="p-2 rounded-xl bg-white hover:bg-slate-100 border-2 border-slate-900 shadow-[2px_2px_0px_0px_#0f172a] text-slate-950 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition"
+            className="p-1.5 rounded-xl bg-white hover:bg-slate-100 border-2 border-slate-900 shadow-[2px_2px_0px_0px_#0f172a] text-slate-950 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition"
             title="Zoom In"
           >
-            <ZoomIn className="w-4 h-4" />
+            <ZoomIn className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={() => handleZoom(false)}
-            className="p-2 rounded-xl bg-white hover:bg-slate-100 border-2 border-slate-900 shadow-[2px_2px_0px_0px_#0f172a] text-slate-950 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition"
+            className="p-1.5 rounded-xl bg-white hover:bg-slate-100 border-2 border-slate-900 shadow-[2px_2px_0px_0px_#0f172a] text-slate-950 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition"
             title="Zoom Out"
           >
-            <ZoomOut className="w-4 h-4" />
+            <ZoomOut className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>

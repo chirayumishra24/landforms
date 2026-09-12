@@ -88,7 +88,10 @@ export const Mission4Livelihoods: React.FC<Props> = ({
 }) => {
   const [matches, setMatches] = useState<Record<string, LandformType>>({});
   const [correctMatches, setCorrectMatches] = useState<Record<string, boolean>>({});
-  const [feedback, setFeedback] = useState<string | null>(null);
+  const [wrongAttempts, setWrongAttempts] = useState<Record<string, number>>({});
+  const [eliminatedLandforms, setEliminatedLandforms] = useState<Record<string, LandformType[]>>({});
+  const [livelihoodResolved, setLivelihoodResolved] = useState<Record<string, boolean>>({});
+  const [feedback, setFeedback] = useState<{ isCorrect: boolean; isPassed?: boolean; text: string } | null>(null);
 
   const landformZones: { id: LandformType; label: string; icon: string }[] = [
     { id: 'mountains', label: 'Mountains', icon: '🏔️' },
@@ -99,26 +102,62 @@ export const Mission4Livelihoods: React.FC<Props> = ({
   ];
 
   const handleAssignLivelihood = (item: LivelihoodItem, landform: LandformType) => {
+    if (livelihoodResolved[item.id]) return;
+    if (eliminatedLandforms[item.id]?.includes(landform)) return;
+
     soundEngine.playClick();
     setMatches(prev => ({ ...prev, [item.id]: landform }));
 
     const isMatch = item.primaryLandform === landform || item.alternateLandform === landform;
+    const otherTeam = turnTeam === 'terraformers' ? 'earthkeepers' : 'terraformers';
+    const attempts = wrongAttempts[item.id] || 0;
 
     if (isMatch) {
-      if (!correctMatches[item.id]) {
-        soundEngine.playCorrect();
-        onAwardPoints(100, 'knowledge');
-        setCorrectMatches(prev => ({ ...prev, [item.id]: true }));
-      }
-      setFeedback(`✓ EXCELLENT ALLOCATION (+100 LP): ${item.geographicalReason}`);
+      soundEngine.playCorrect();
+      const isSteal = attempts > 0;
+      const points = isSteal ? 120 : 100;
+      onAwardPoints(points, 'knowledge');
+      setCorrectMatches(prev => ({ ...prev, [item.id]: true }));
+      setLivelihoodResolved(prev => ({ ...prev, [item.id]: true }));
+
+      setFeedback({
+        isCorrect: true,
+        isPassed: false,
+        text: isSteal
+          ? `🎯 STEAL SUCCESSFUL (+${points} LP for ${teams[turnTeam].name})! ${item.geographicalReason}`
+          : `✓ EXCELLENT ALLOCATION (+${points} LP for ${teams[turnTeam].name})! ${item.geographicalReason}`
+      });
     } else {
       soundEngine.playWrong();
-      setFeedback(`⚠️ Suboptimal geography: ${landform.toUpperCase()} does not naturally provide the resources required for ${item.title}. Consider the underlying minerals, soils, and elevation!`);
+      const nextAttempts = attempts + 1;
+      setWrongAttempts(prev => ({ ...prev, [item.id]: nextAttempts }));
+      setEliminatedLandforms(prev => ({
+        ...prev,
+        [item.id]: [...(prev[item.id] || []), landform]
+      }));
+
+      if (nextAttempts === 1) {
+        soundEngine.playStealAlert();
+        setFeedback({
+          isCorrect: false,
+          isPassed: true,
+          text: `❌ SUBOPTIMAL GEOGRAPHY by ${teams[turnTeam].name}! Chance passes to ${teams[otherTeam].name} to allocate ${item.title}!`
+        });
+        onSwitchTurn();
+      } else {
+        setLivelihoodResolved(prev => ({ ...prev, [item.id]: true }));
+        setFeedback({
+          isCorrect: false,
+          isPassed: false,
+          text: `❌ BOTH TEAMS MISSED! ${item.title} belongs in ${item.primaryLandform.toUpperCase()}: ${item.geographicalReason}`
+        });
+      }
     }
   };
 
-  const totalAssigned = Object.values(correctMatches).filter(Boolean).length;
+  const totalAssigned = Object.values(livelihoodResolved).filter(Boolean).length;
   const isMissionFinished = totalAssigned >= LIVELIHOODS.length;
+  const isAnyStealActive = Object.values(wrongAttempts).some(att => att === 1) && feedback?.isPassed;
 
   return (
     <div className="relative min-h-[calc(100vh-60px)] p-4 sm:p-6 bg-transparent text-slate-900 select-none">
@@ -163,20 +202,25 @@ export const Mission4Livelihoods: React.FC<Props> = ({
           teams={teams}
           onSwitchTurn={onSwitchTurn}
           actionPrompt="Choose the most suitable landform for this economic livelihood!"
+          isStealActive={Boolean(isAnyStealActive)}
         />
 
         {/* Livelihoods Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
           {LIVELIHOODS.map((item) => {
-            const isDone = correctMatches[item.id];
+            const isDone = Boolean(livelihoodResolved[item.id]);
+            const isCorrect = Boolean(correctMatches[item.id]);
             const currentChoice = matches[item.id];
+            const eliminated = eliminatedLandforms[item.id] || [];
 
             return (
               <div
                 key={item.id}
                 className={`p-5 rounded-3xl border-2.5 border-slate-900 transition-all duration-300 shadow-[4px_4px_0px_0px_#0f172a] flex flex-col justify-between ${
                   isDone
-                    ? 'bg-emerald-100'
+                    ? isCorrect
+                      ? 'bg-emerald-100'
+                      : 'bg-rose-100'
                     : 'bg-white hover:-translate-y-1'
                 }`}
               >
@@ -184,9 +228,15 @@ export const Mission4Livelihoods: React.FC<Props> = ({
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-3xl">{item.icon}</span>
                     {isDone ? (
-                      <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-200 text-emerald-950 font-black border border-emerald-900 flex items-center gap-1">
-                        <CheckCircle2 className="w-3.5 h-3.5" /> Allocated
-                      </span>
+                      isCorrect ? (
+                        <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-200 text-emerald-950 font-black border border-emerald-900 flex items-center gap-1">
+                          <CheckCircle2 className="w-3.5 h-3.5" /> Allocated
+                        </span>
+                      ) : (
+                        <span className="text-xs px-2.5 py-0.5 rounded-full bg-rose-200 text-rose-950 font-black border border-rose-900 flex items-center gap-1">
+                          ❌ Unsolved
+                        </span>
+                      )
                     ) : (
                       <span className="text-[10px] text-slate-600 uppercase tracking-wider font-black">Unassigned</span>
                     )}
@@ -206,14 +256,17 @@ export const Mission4Livelihoods: React.FC<Props> = ({
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
                     {landformZones.map((zone) => {
                       const isSelected = currentChoice === zone.id;
+                      const isEliminated = eliminated.includes(zone.id);
 
                       return (
                         <button
                           key={zone.id}
                           onClick={() => handleAssignLivelihood(item, zone.id)}
-                          disabled={isDone}
+                          disabled={isDone || isEliminated}
                           className={`p-1.5 rounded-xl text-[11px] font-black border-2 border-slate-900 transition flex items-center justify-center gap-1 cursor-pointer ${
-                            isSelected && isDone
+                            isEliminated
+                              ? 'bg-slate-200 text-slate-400 line-through opacity-50 cursor-not-allowed border-slate-400'
+                              : isSelected && isCorrect
                               ? 'bg-emerald-300 text-emerald-950 shadow-[1px_1px_0px_0px_#0f172a]'
                               : isSelected && !isMatch(item, zone.id)
                               ? 'bg-rose-200 text-rose-950'
@@ -234,9 +287,17 @@ export const Mission4Livelihoods: React.FC<Props> = ({
 
         {/* Live Feedback Banner */}
         {feedback && (
-          <div className="p-4 rounded-2xl bg-emerald-100 border-2 border-slate-900 text-xs sm:text-sm text-emerald-950 font-bold flex items-start gap-2.5 shadow-[3px_3px_0px_0px_#0f172a] animate-fade-in">
-            <Sparkles className="w-4 h-4 shrink-0 text-amber-600 mt-0.5" />
-            <span>{feedback}</span>
+          <div className={`p-4 rounded-2xl border-2 border-slate-900 text-xs sm:text-sm font-bold flex items-start gap-2.5 shadow-[3px_3px_0px_0px_#0f172a] animate-fade-in ${
+            feedback.isCorrect
+              ? 'bg-emerald-100 text-emerald-950'
+              : feedback.isPassed
+              ? 'bg-amber-100 text-amber-950'
+              : 'bg-rose-100 text-rose-950'
+          }`}>
+            <Sparkles className={`w-4 h-4 shrink-0 mt-0.5 ${
+              feedback.isCorrect ? 'text-emerald-700' : 'text-amber-700'
+            }`} />
+            <span>{feedback.text}</span>
           </div>
         )}
       </div>

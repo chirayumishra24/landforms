@@ -210,6 +210,7 @@ export const Mission2LifeAdapts: React.FC<Props> = ({
           teams={teams}
           onSwitchTurn={onSwitchTurn}
           actionPrompt="Match human livelihoods or solve the animal adaptation 'Why?' question!"
+          isStealActive={Boolean(humanFeedbackInfo?.isPassed || animalFeedbackInfo?.isPassed)}
         />
 
         {/* Phase Toggle Tabs */}

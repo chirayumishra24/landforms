@@ -150,6 +150,7 @@ export const Mission5Crisis: React.FC<Props> = ({
           teams={teams}
           onSwitchTurn={onSwitchTurn}
           actionPrompt="Evaluate the environmental disaster scenario and select the best mitigation strategy!"
+          isStealActive={Boolean(feedback?.isPassed)}
         />
 
         {/* Crisis Step Pills */}

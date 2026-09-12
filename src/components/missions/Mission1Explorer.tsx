@@ -221,6 +221,7 @@ export const Mission1Explorer: React.FC<Props> = ({
           teams={teams}
           onSwitchTurn={onSwitchTurn}
           actionPrompt="Step to the Smart Board! Scan 3D features and solve the landform challenge!"
+          isStealActive={wrongAttempts[activeTab] === 1 && Boolean(feedback?.isPassed)}
         />
 
         {/* 5 Landform Category Navigation Tabs */}

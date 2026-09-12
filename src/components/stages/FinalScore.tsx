@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TeamId, TeamState } from '@/types/game';
 import confetti from 'canvas-confetti';
-import { Trophy, Award, Sparkles, ArrowRight, RotateCcw, CheckCircle2 } from 'lucide-react';
+import { Trophy, Award, Sparkles, ArrowRight, RotateCcw, CheckCircle2, Printer } from 'lucide-react';
 import { soundEngine } from '@/utils/soundEngine';
+import { VictoryCertificateModal } from '@/components/ui/VictoryCertificateModal';
 
 interface Props {
   teams: Record<TeamId, TeamState>;
@@ -19,6 +20,7 @@ export const FinalScore: React.FC<Props> = ({
 }) => {
   const terra = teams.terraformers;
   const keeper = teams.earthkeepers;
+  const [showCertificate, setShowCertificate] = useState(false);
 
   const winner: TeamState = terra.points >= keeper.points ? terra : keeper;
   const isTie = terra.points === keeper.points;
@@ -220,14 +222,32 @@ export const FinalScore: React.FC<Props> = ({
           </button>
 
           <button
+            onClick={() => {
+              soundEngine.playClick();
+              setShowCertificate(true);
+            }}
+            className="px-6 py-3.5 rounded-2xl bg-amber-300 hover:bg-amber-400 border-2.5 border-slate-900 text-slate-950 text-xs sm:text-sm font-black shadow-[3px_3px_0px_0px_#0f172a] flex items-center gap-2 transition transform hover:scale-105 active:scale-95 cursor-pointer"
+          >
+            <Printer className="w-4 h-4" />
+            <span>PRINT DIPLOMA 📜</span>
+          </button>
+
+          <button
             onClick={() => { soundEngine.playClick(); onContinue(); }}
-            className="px-10 py-3.5 rounded-2xl bg-emerald-400 hover:bg-emerald-300 border-2.5 border-slate-900 text-slate-900 font-black text-sm sm:text-base shadow-[4px_4px_0px_0px_#0f172a] flex items-center gap-2 transition transform hover:scale-105 active:scale-95"
+            className="px-8 py-3.5 rounded-2xl bg-emerald-400 hover:bg-emerald-300 border-2.5 border-slate-900 text-slate-900 font-black text-sm sm:text-base shadow-[4px_4px_0px_0px_#0f172a] flex items-center gap-2 transition transform hover:scale-105 active:scale-95 cursor-pointer"
           >
             <span>WHAT DID WE DISCOVER? (LEARNING SUMMARY)</span>
             <ArrowRight className="w-5 h-5" />
           </button>
         </div>
       </div>
+
+      {/* Official Printable Victory Diploma Modal */}
+      <VictoryCertificateModal
+        isOpen={showCertificate}
+        onClose={() => setShowCertificate(false)}
+        teams={teams}
+      />
     </div>
   );
 };
