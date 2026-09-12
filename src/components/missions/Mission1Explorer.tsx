@@ -166,6 +166,8 @@ export const Mission1Explorer: React.FC<Props> = ({
     const currIdx = landformKeys.indexOf(activeTab);
     if (currIdx < landformKeys.length - 1) {
       setActiveTab(landformKeys[currIdx + 1]);
+    } else {
+      onComplete();
     }
   };
 
@@ -204,14 +206,12 @@ export const Mission1Explorer: React.FC<Props> = ({
               <span className="text-xs text-slate-700 font-black uppercase">Regions Cleared:</span>
               <span className="text-sm font-black text-emerald-600">{totalResolved} / 5</span>
             </div>
-            {isMissionFinished && (
-              <button
-                onClick={() => { soundEngine.playClick(); onComplete(); }}
-                className="px-6 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-400 to-teal-400 hover:from-emerald-300 hover:to-teal-300 border-2.5 border-slate-900 text-slate-950 font-black text-sm shadow-[4px_4px_0px_0px_#0f172a] flex items-center gap-2 animate-bounce cursor-pointer active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
-              >
-                <span>FINISH MISSION ➔</span>
-              </button>
-            )}
+            <button
+              onClick={() => { soundEngine.playClick(); onComplete(); }}
+              className="px-5 py-2 rounded-2xl bg-emerald-400 hover:bg-emerald-300 border-2.5 border-slate-900 text-slate-950 font-black text-xs sm:text-sm shadow-[4px_4px_0px_0px_#0f172a] flex items-center gap-1.5 cursor-pointer animate-bounce active:translate-x-0.5 active:translate-y-0.5"
+            >
+              <span>{isMissionFinished ? "FINISH MISSION ➔" : "PROCEED TO MISSION 2 ➔"}</span>
+            </button>
           </div>
         </div>
 
@@ -567,7 +567,7 @@ export const Mission1Explorer: React.FC<Props> = ({
               )}
 
               {/* Next/Prev Navigation & Pass Turn */}
-              <div className="flex items-center justify-between mt-4 pt-3 border-t-2 border-slate-900">
+              <div className="flex items-center justify-between mt-4 pt-3 border-t-2 border-slate-900 gap-2">
                 <button
                   onClick={handlePrevTab}
                   disabled={landformKeys.indexOf(activeTab) === 0}
@@ -577,6 +577,10 @@ export const Mission1Explorer: React.FC<Props> = ({
                   <span>Prev</span>
                 </button>
 
+                <div className="px-3 py-1 rounded-xl bg-slate-100 border-2 border-slate-900 text-xs font-black text-slate-800">
+                  Landform {landformKeys.indexOf(activeTab) + 1} of 5
+                </div>
+
                 <button
                   onClick={onSwitchTurn}
                   className="px-3.5 py-1.5 rounded-2xl bg-yellow-300 hover:bg-yellow-400 border-2 border-slate-900 text-xs font-black text-slate-950 shadow-[2px_2px_0px_0px_#0f172a] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none flex items-center gap-1.5 cursor-pointer"
@@ -584,14 +588,23 @@ export const Mission1Explorer: React.FC<Props> = ({
                   <span>🔄 Pass Turn</span>
                 </button>
 
-                <button
-                  onClick={handleNextTab}
-                  disabled={landformKeys.indexOf(activeTab) === landformKeys.length - 1}
-                  className="px-4 py-2 rounded-2xl bg-blue-500 hover:bg-blue-400 border-2 border-slate-900 disabled:opacity-40 disabled:cursor-not-allowed text-xs font-black text-white flex items-center gap-1 shadow-[3px_3px_0px_0px_#0f172a] cursor-pointer"
-                >
-                  <span>Next Landform</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
+                {landformKeys.indexOf(activeTab) === landformKeys.length - 1 ? (
+                  <button
+                    onClick={() => { soundEngine.playClick(); onComplete(); }}
+                    className="px-4 py-2 rounded-2xl bg-emerald-400 hover:bg-emerald-300 border-2 border-slate-900 text-xs font-black text-slate-950 flex items-center gap-1.5 shadow-[3px_3px_0px_0px_#0f172a] cursor-pointer animate-pulse"
+                  >
+                    <span>Proceed to Mission 2</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleNextTab}
+                    className="px-4 py-2 rounded-2xl bg-blue-500 hover:bg-blue-400 border-2 border-slate-900 text-xs font-black text-white flex items-center gap-1 shadow-[3px_3px_0px_0px_#0f172a] cursor-pointer"
+                  >
+                    <span>Next Landform</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                )}
               </div>
             </div>
           </div>

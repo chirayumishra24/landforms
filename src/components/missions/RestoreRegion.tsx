@@ -56,14 +56,16 @@ export const RestoreRegion: React.FC<Props> = ({
               <span className="text-sm font-black text-emerald-600">{completedCount} / 5 Tasks</span>
             </div>
 
-            {isAllComplete && (
-              <button
-                onClick={() => { soundEngine.playClick(); onFinishGame(); }}
-                className="px-6 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 border-2.5 border-slate-900 text-slate-900 font-black text-sm shadow-[4px_4px_0px_0px_#0f172a] flex items-center gap-2 animate-bounce"
-              >
-                <span>VIEW FINAL CHAMPIONSHIP RESULTS ➔</span>
-              </button>
-            )}
+            <button
+              onClick={() => { soundEngine.playClick(); onFinishGame(); }}
+              className={`px-5 py-2.5 rounded-2xl border-2.5 border-slate-900 font-black text-xs sm:text-sm shadow-[4px_4px_0px_0px_#0f172a] flex items-center gap-2 cursor-pointer active:translate-x-0.5 active:translate-y-0.5 ${
+                isAllComplete
+                  ? 'bg-amber-400 hover:bg-amber-300 text-slate-950 animate-bounce'
+                  : 'bg-white hover:bg-amber-100 text-slate-900'
+              }`}
+            >
+              <span>{isAllComplete ? "VIEW FINAL CHAMPIONSHIP RESULTS ➔" : "PROCEED TO FINAL RESULTS ➔"}</span>
+            </button>
           </div>
         </div>
 

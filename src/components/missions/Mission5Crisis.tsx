@@ -91,6 +91,8 @@ export const Mission5Crisis: React.FC<Props> = ({
     onSwitchTurn();
     if (currentIdx < CRISIS_SCENARIOS.length - 1) {
       setCurrentIdx(prev => prev + 1);
+    } else {
+      onComplete();
     }
   };
 
@@ -129,14 +131,16 @@ export const Mission5Crisis: React.FC<Props> = ({
               <span className="text-sm font-black text-emerald-700">{totalResolved} / {CRISIS_SCENARIOS.length}</span>
             </div>
 
-            {isAllResolved && (
-              <button
-                onClick={() => { soundEngine.playClick(); onComplete(); }}
-                className="px-6 py-2.5 rounded-2xl bg-emerald-400 hover:bg-emerald-300 border-2.5 border-slate-900 text-slate-950 font-black text-sm shadow-[4px_4px_0px_0px_#0f172a] flex items-center gap-2 animate-bounce cursor-pointer"
-              >
-                <span>FINISH MISSION ➔</span>
-              </button>
-            )}
+            <button
+              onClick={() => { soundEngine.playClick(); onComplete(); }}
+              className={`px-5 py-2 rounded-2xl border-2.5 border-slate-900 font-black text-xs sm:text-sm shadow-[4px_4px_0px_0px_#0f172a] flex items-center gap-1.5 cursor-pointer active:translate-x-0.5 active:translate-y-0.5 ${
+                isAllResolved
+                  ? 'bg-emerald-400 hover:bg-emerald-300 text-slate-950 animate-bounce'
+                  : 'bg-white hover:bg-amber-100 text-slate-900'
+              }`}
+            >
+              <span>{isAllResolved ? "FINISH MISSION ➔" : "PROCEED TO BLITZ ➔"}</span>
+            </button>
           </div>
         </div>
 
@@ -260,7 +264,7 @@ export const Mission5Crisis: React.FC<Props> = ({
           )}
 
           {/* Navigation Controls */}
-          <div className="flex items-center justify-between pt-4 border-t-2 border-slate-900">
+          <div className="flex items-center justify-between pt-4 border-t-2 border-slate-900 gap-2">
             <button
               onClick={handlePrev}
               disabled={currentIdx === 0}
@@ -269,6 +273,10 @@ export const Mission5Crisis: React.FC<Props> = ({
               Previous Threat
             </button>
 
+            <div className="px-3 py-1 rounded-xl bg-slate-100 border-2 border-slate-900 text-xs font-black text-slate-800">
+              Threat {currentIdx + 1} of {CRISIS_SCENARIOS.length}
+            </div>
+
             <button
               onClick={onSwitchTurn}
               className="px-3.5 py-1.5 rounded-xl bg-yellow-300 hover:bg-yellow-400 border-2 border-slate-900 text-xs font-black text-slate-950 shadow-[2px_2px_0px_0px_#0f172a] cursor-pointer"
@@ -276,13 +284,21 @@ export const Mission5Crisis: React.FC<Props> = ({
               🔄 Pass Turn
             </button>
 
-            <button
-              onClick={handleNext}
-              disabled={currentIdx === CRISIS_SCENARIOS.length - 1}
-              className="px-4 py-2 rounded-2xl bg-rose-500 hover:bg-rose-400 border-2 border-slate-900 disabled:opacity-40 text-xs font-black text-white shadow-[3px_3px_0px_0px_#0f172a] cursor-pointer"
-            >
-              Next Threat
-            </button>
+            {currentIdx === CRISIS_SCENARIOS.length - 1 ? (
+              <button
+                onClick={() => { soundEngine.playClick(); onComplete(); }}
+                className="px-4 py-2 rounded-2xl bg-emerald-400 hover:bg-emerald-300 border-2 border-slate-900 text-xs font-black text-slate-950 shadow-[3px_3px_0px_0px_#0f172a] cursor-pointer animate-pulse"
+              >
+                Proceed to Blitz ➔
+              </button>
+            ) : (
+              <button
+                onClick={handleNext}
+                className="px-4 py-2 rounded-2xl bg-rose-500 hover:bg-rose-400 border-2 border-slate-900 text-xs font-black text-white shadow-[3px_3px_0px_0px_#0f172a] cursor-pointer"
+              >
+                Next Threat ➔
+              </button>
+            )}
           </div>
         </div>
       </div>

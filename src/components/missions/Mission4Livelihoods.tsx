@@ -144,14 +144,16 @@ export const Mission4Livelihoods: React.FC<Props> = ({
               <span className="text-sm font-black text-emerald-700">{totalAssigned} / {LIVELIHOODS.length}</span>
             </div>
 
-            {isMissionFinished && (
-              <button
-                onClick={() => { soundEngine.playClick(); onComplete(); }}
-                className="px-6 py-2.5 rounded-2xl bg-emerald-400 hover:bg-emerald-300 border-2.5 border-slate-900 text-slate-950 font-black text-sm shadow-[4px_4px_0px_0px_#0f172a] flex items-center gap-2 animate-bounce cursor-pointer"
-              >
-                <span>COMPLETE MISSION ➔</span>
-              </button>
-            )}
+            <button
+              onClick={() => { soundEngine.playClick(); onComplete(); }}
+              className={`px-5 py-2 rounded-2xl border-2.5 border-slate-900 font-black text-xs sm:text-sm shadow-[4px_4px_0px_0px_#0f172a] flex items-center gap-1.5 cursor-pointer active:translate-x-0.5 active:translate-y-0.5 ${
+                isMissionFinished
+                  ? 'bg-emerald-400 hover:bg-emerald-300 text-slate-950 animate-bounce'
+                  : 'bg-white hover:bg-amber-100 text-slate-900'
+              }`}
+            >
+              <span>{isMissionFinished ? "COMPLETE MISSION ➔" : "PROCEED TO MISSION 5 ➔"}</span>
+            </button>
           </div>
         </div>
 
