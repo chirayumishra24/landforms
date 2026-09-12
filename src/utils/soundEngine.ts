@@ -173,6 +173,33 @@ class SoundEngine {
       osc.stop(this.ctx.currentTime + t + 0.45);
     });
   }
+
+  public playTurnChange(team: 'terraformers' | 'earthkeepers') {
+    if (this.isMuted) return;
+    this.initCtx();
+    if (!this.ctx) return;
+
+    const freqs = team === 'terraformers'
+      ? [523.25, 659.25, 783.99, 1046.50] // C5, E5, G5, C6 (Bright Blue Fanfare)
+      : [440.00, 554.37, 659.25, 880.00]; // A4, C#5, E5, A5 (Warm Orange Fanfare)
+
+    freqs.forEach((freq, idx) => {
+      if (!this.ctx) return;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, this.ctx.currentTime + idx * 0.08);
+
+      gain.gain.setValueAtTime(0.14, this.ctx.currentTime + idx * 0.08);
+      gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + idx * 0.08 + 0.3);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+
+      osc.start(this.ctx.currentTime + idx * 0.08);
+      osc.stop(this.ctx.currentTime + idx * 0.08 + 0.3);
+    });
+  }
 }
 
 export const soundEngine = new SoundEngine();

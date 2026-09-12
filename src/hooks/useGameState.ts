@@ -17,7 +17,7 @@ export function useGameState() {
   const [teams, setTeams] = useState<Record<TeamId, TeamState>>({
     terraformers: {
       id: 'terraformers',
-      name: 'Team Terraformers',
+      name: 'Team A (Terraformers)',
       tagline: 'Explore • Plan • Build',
       color: '#3b82f6',
       points: 0,
@@ -25,7 +25,7 @@ export function useGameState() {
     },
     earthkeepers: {
       id: 'earthkeepers',
-      name: 'Team Earthkeepers',
+      name: 'Team B (Earthkeepers)',
       tagline: 'Observe • Adapt • Protect',
       color: '#f97316',
       points: 0,

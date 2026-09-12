@@ -65,7 +65,7 @@ export const TurnBanner: React.FC<Props> = ({
           title="Switch active turn to the other team"
         >
           <ArrowRightLeft className="w-4 h-4 text-slate-950" />
-          <span>Pass Turn ➔ {isTerra ? 'Earthkeepers 🟠' : 'Terraformers 🔵'}</span>
+          <span>Pass Turn ➔ {isTerra ? 'Team B 🟠' : 'Team A 🔵'}</span>
         </button>
       </div>
     </div>

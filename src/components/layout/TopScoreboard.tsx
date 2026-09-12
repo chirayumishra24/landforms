@@ -119,7 +119,7 @@ export const TopScoreboard: React.FC<Props> = ({
               </div>
               <div className="text-left">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] font-black tracking-wider text-blue-900 uppercase">Terraformers</span>
+                  <span className="text-[10px] font-black tracking-wider text-blue-900 uppercase">Team A • Terraformers</span>
                   {turnTeam === 'terraformers' ? (
                     <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-blue-600 text-white font-black animate-pulse">ACTIVE TURN</span>
                   ) : (
@@ -151,7 +151,7 @@ export const TopScoreboard: React.FC<Props> = ({
               </div>
               <div className="text-left">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] font-black tracking-wider text-orange-900 uppercase">Earthkeepers</span>
+                  <span className="text-[10px] font-black tracking-wider text-orange-900 uppercase">Team B • Earthkeepers</span>
                   {turnTeam === 'earthkeepers' ? (
                     <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-orange-600 text-white font-black animate-pulse">ACTIVE TURN</span>
                   ) : (

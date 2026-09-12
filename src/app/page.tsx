@@ -17,6 +17,7 @@ import { LandformBlitz } from '@/components/missions/LandformBlitz';
 import { RestoreRegion } from '@/components/missions/RestoreRegion';
 import { FinalScore } from '@/components/stages/FinalScore';
 import { LearningSummary } from '@/components/stages/LearningSummary';
+import { TurnTransitionOverlay } from '@/components/ui/TurnTransitionOverlay';
 
 export default function GamePage() {
   const {
@@ -40,8 +41,32 @@ export default function GamePage() {
     resetGame
   } = useGameState();
 
+  const [showTurnOverlay, setShowTurnOverlay] = React.useState(false);
+  const prevTurnTeam = React.useRef(turnTeam);
+  const prevStage = React.useRef(currentStage);
+
+  React.useEffect(() => {
+    const isPlayStage = !['start', 'story', 'team_select', 'how_to_play'].includes(currentStage);
+    const wasPlayStage = !['start', 'story', 'team_select', 'how_to_play'].includes(prevStage.current);
+
+    if (isPlayStage && (!wasPlayStage || prevTurnTeam.current !== turnTeam)) {
+      setShowTurnOverlay(true);
+    }
+
+    prevTurnTeam.current = turnTeam;
+    prevStage.current = currentStage;
+  }, [turnTeam, currentStage]);
+
   return (
     <div className="min-h-screen bg-maximalist-dots text-slate-900 flex flex-col justify-between selection:bg-yellow-300 selection:text-black">
+      {/* Animated Turn Transition Announcement */}
+      <TurnTransitionOverlay
+        turnTeam={turnTeam}
+        teams={teams}
+        isOpen={showTurnOverlay}
+        onClose={() => setShowTurnOverlay(false)}
+      />
+
       {/* Persistent Top Scoreboard HUD */}
       <TopScoreboard
         currentStage={currentStage}
