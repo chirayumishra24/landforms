@@ -15,34 +15,8 @@ export const StartScreen: React.FC<Props> = ({ onStart }) => {
   };
 
   return (
-    <div className="relative min-h-[calc(100vh-60px)] flex flex-col justify-between overflow-hidden bg-gradient-to-b from-sky-200 via-sky-100 to-amber-50 text-slate-900 select-none">
-      {/* Background Illustrated Terrain Layers */}
-      <div className="absolute inset-0 pointer-events-none opacity-40 overflow-hidden">
-        {/* Distant Mountain Peaks */}
-        <svg className="absolute bottom-0 w-full h-[65%] text-slate-400/50" viewBox="0 0 1440 600" preserveAspectRatio="none">
-          <polygon points="0,600 120,380 280,500 450,220 620,440 820,180 1020,420 1200,260 1350,450 1440,320 1440,600" fill="currentColor" />
-          <polygon points="450,220 500,300 400,300" fill="#ffffff" opacity="0.8" />
-          <polygon points="820,180 870,270 770,270" fill="#ffffff" opacity="0.8" />
-        </svg>
+    <div className="relative min-h-[calc(100vh-60px)] flex flex-col justify-between overflow-hidden bg-transparent text-slate-900 select-none">
 
-        {/* Midground Plateau & Forests */}
-        <svg className="absolute bottom-0 w-full h-[45%] text-amber-300/40" viewBox="0 0 1440 400" preserveAspectRatio="none">
-          <path d="M0,400 L0,220 L260,220 L350,290 L600,290 L750,190 L1050,190 L1150,270 L1440,240 L1440,400 Z" fill="currentColor" />
-        </svg>
-
-        {/* Foreground Lush Plains and Coastal Bay */}
-        <svg className="absolute bottom-0 w-full h-[30%] text-emerald-400/40" viewBox="0 0 1440 300" preserveAspectRatio="none">
-          <path d="M0,300 Q360,180 720,240 T1440,200 L1440,300 Z" fill="currentColor" />
-        </svg>
-        <svg className="absolute bottom-0 w-full h-[22%] text-cyan-500/50" viewBox="0 0 1440 250" preserveAspectRatio="none">
-          <path d="M0,250 C400,200 650,260 900,180 C1150,100 1350,220 1440,250 Z" fill="#0284c7" opacity="0.4" />
-        </svg>
-      </div>
-
-      {/* Floating Sparkle Particles */}
-      <div className="absolute top-16 left-12 w-3 h-3 rounded-full bg-cyan-400 animate-ping opacity-75" />
-      <div className="absolute top-28 right-24 w-3.5 h-3.5 rounded-full bg-amber-400 animate-pulse opacity-80" />
-      <div className="absolute bottom-40 left-1/4 w-3 h-3 rounded-full bg-emerald-400 animate-bounce opacity-70" />
 
       {/* Hero Header Slogan Banner */}
       <div className="relative z-10 pt-6 px-4 text-center">

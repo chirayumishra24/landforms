@@ -53,9 +53,17 @@ export const FinalScore: React.FC<Props> = ({
     frame();
   }, []);
 
-  // Format percentages for radar/breakdown
-  const getPercentage = (val: number, maxVal = 600) => {
-    return Math.min(Math.round((val / maxVal) * 100) + 75, 98);
+  // Dynamic percentages based on realistic category targets
+  const getPercentage = (val: number, cat: 'knowledge' | 'planning' | 'adaptation' | 'decisions') => {
+    if (!val || val <= 0) return 0;
+    const maxTargets = {
+      knowledge: 300,
+      planning: 250,
+      adaptation: 300,
+      decisions: 400
+    };
+    const max = maxTargets[cat];
+    return Math.min(100, Math.max(5, Math.round((val / max) * 100)));
   };
 
   return (
@@ -87,7 +95,7 @@ export const FinalScore: React.FC<Props> = ({
             <div className="flex items-center justify-between mb-3">
               <span className="text-4xl">🗺️</span>
               <span className="text-xs px-3 py-1 rounded-full bg-blue-300 border-2 border-slate-900 text-slate-900 font-black shadow-[2px_2px_0px_0px_#0f172a]">
-                TEAM TERRAFORMERS
+                TEAM A • TERRAFORMERS
               </span>
             </div>
 
@@ -100,40 +108,40 @@ export const FinalScore: React.FC<Props> = ({
               <div>
                 <div className="flex justify-between text-slate-700 mb-1">
                   <span>Landform Knowledge</span>
-                  <span className="font-black text-blue-900">{getPercentage(terra.stats.knowledge)}%</span>
+                  <span className="font-black text-blue-900">{terra.stats.knowledge} LP ({getPercentage(terra.stats.knowledge, 'knowledge')}%)</span>
                 </div>
                 <div className="w-full bg-slate-200 h-2.5 rounded-full border border-slate-900 overflow-hidden">
-                  <div className="h-full bg-blue-500" style={{ width: `${getPercentage(terra.stats.knowledge)}%` }} />
+                  <div className="h-full bg-blue-500 transition-all duration-700" style={{ width: `${getPercentage(terra.stats.knowledge, 'knowledge')}%` }} />
                 </div>
               </div>
 
               <div>
                 <div className="flex justify-between text-slate-700 mb-1">
                   <span>Spatial Planning</span>
-                  <span className="font-black text-blue-900">{getPercentage(terra.stats.planning)}%</span>
+                  <span className="font-black text-blue-900">{terra.stats.planning} LP ({getPercentage(terra.stats.planning, 'planning')}%)</span>
                 </div>
                 <div className="w-full bg-slate-200 h-2.5 rounded-full border border-slate-900 overflow-hidden">
-                  <div className="h-full bg-blue-500" style={{ width: `${getPercentage(terra.stats.planning)}%` }} />
+                  <div className="h-full bg-blue-500 transition-all duration-700" style={{ width: `${getPercentage(terra.stats.planning, 'planning')}%` }} />
                 </div>
               </div>
 
               <div>
                 <div className="flex justify-between text-slate-700 mb-1">
                   <span>Environmental Adaptation</span>
-                  <span className="font-black text-blue-900">{getPercentage(terra.stats.adaptation)}%</span>
+                  <span className="font-black text-blue-900">{terra.stats.adaptation} LP ({getPercentage(terra.stats.adaptation, 'adaptation')}%)</span>
                 </div>
                 <div className="w-full bg-slate-200 h-2.5 rounded-full border border-slate-900 overflow-hidden">
-                  <div className="h-full bg-blue-500" style={{ width: `${getPercentage(terra.stats.adaptation)}%` }} />
+                  <div className="h-full bg-blue-500 transition-all duration-700" style={{ width: `${getPercentage(terra.stats.adaptation, 'adaptation')}%` }} />
                 </div>
               </div>
 
               <div>
                 <div className="flex justify-between text-slate-700 mb-1">
                   <span>Hazard Decision Making</span>
-                  <span className="font-black text-blue-900">{getPercentage(terra.stats.decisions)}%</span>
+                  <span className="font-black text-blue-900">{terra.stats.decisions} LP ({getPercentage(terra.stats.decisions, 'decisions')}%)</span>
                 </div>
                 <div className="w-full bg-slate-200 h-2.5 rounded-full border border-slate-900 overflow-hidden">
-                  <div className="h-full bg-blue-500" style={{ width: `${getPercentage(terra.stats.decisions)}%` }} />
+                  <div className="h-full bg-blue-500 transition-all duration-700" style={{ width: `${getPercentage(terra.stats.decisions, 'decisions')}%` }} />
                 </div>
               </div>
             </div>
@@ -148,7 +156,7 @@ export const FinalScore: React.FC<Props> = ({
             <div className="flex items-center justify-between mb-3">
               <span className="text-4xl">🔭</span>
               <span className="text-xs px-3 py-1 rounded-full bg-orange-300 border-2 border-slate-900 text-slate-900 font-black shadow-[2px_2px_0px_0px_#0f172a]">
-                TEAM EARTHKEEPERS
+                TEAM B • EARTHKEEPERS
               </span>
             </div>
 
@@ -161,40 +169,40 @@ export const FinalScore: React.FC<Props> = ({
               <div>
                 <div className="flex justify-between text-slate-700 mb-1">
                   <span>Landform Knowledge</span>
-                  <span className="font-black text-orange-900">{getPercentage(keeper.stats.knowledge)}%</span>
+                  <span className="font-black text-orange-900">{keeper.stats.knowledge} LP ({getPercentage(keeper.stats.knowledge, 'knowledge')}%)</span>
                 </div>
                 <div className="w-full bg-slate-200 h-2.5 rounded-full border border-slate-900 overflow-hidden">
-                  <div className="h-full bg-orange-500" style={{ width: `${getPercentage(keeper.stats.knowledge)}%` }} />
+                  <div className="h-full bg-orange-500 transition-all duration-700" style={{ width: `${getPercentage(keeper.stats.knowledge, 'knowledge')}%` }} />
                 </div>
               </div>
 
               <div>
                 <div className="flex justify-between text-slate-700 mb-1">
                   <span>Spatial Planning</span>
-                  <span className="font-black text-orange-900">{getPercentage(keeper.stats.planning)}%</span>
+                  <span className="font-black text-orange-900">{keeper.stats.planning} LP ({getPercentage(keeper.stats.planning, 'planning')}%)</span>
                 </div>
                 <div className="w-full bg-slate-200 h-2.5 rounded-full border border-slate-900 overflow-hidden">
-                  <div className="h-full bg-orange-500" style={{ width: `${getPercentage(keeper.stats.planning)}%` }} />
+                  <div className="h-full bg-orange-500 transition-all duration-700" style={{ width: `${getPercentage(keeper.stats.planning, 'planning')}%` }} />
                 </div>
               </div>
 
               <div>
                 <div className="flex justify-between text-slate-700 mb-1">
                   <span>Environmental Adaptation</span>
-                  <span className="font-black text-orange-900">{getPercentage(keeper.stats.adaptation)}%</span>
+                  <span className="font-black text-orange-900">{keeper.stats.adaptation} LP ({getPercentage(keeper.stats.adaptation, 'adaptation')}%)</span>
                 </div>
                 <div className="w-full bg-slate-200 h-2.5 rounded-full border border-slate-900 overflow-hidden">
-                  <div className="h-full bg-orange-500" style={{ width: `${getPercentage(keeper.stats.adaptation)}%` }} />
+                  <div className="h-full bg-orange-500 transition-all duration-700" style={{ width: `${getPercentage(keeper.stats.adaptation, 'adaptation')}%` }} />
                 </div>
               </div>
 
               <div>
                 <div className="flex justify-between text-slate-700 mb-1">
                   <span>Hazard Decision Making</span>
-                  <span className="font-black text-orange-900">{getPercentage(keeper.stats.decisions)}%</span>
+                  <span className="font-black text-orange-900">{keeper.stats.decisions} LP ({getPercentage(keeper.stats.decisions, 'decisions')}%)</span>
                 </div>
                 <div className="w-full bg-slate-200 h-2.5 rounded-full border border-slate-900 overflow-hidden">
-                  <div className="h-full bg-orange-500" style={{ width: `${getPercentage(keeper.stats.decisions)}%` }} />
+                  <div className="h-full bg-orange-500 transition-all duration-700" style={{ width: `${getPercentage(keeper.stats.decisions, 'decisions')}%` }} />
                 </div>
               </div>
             </div>

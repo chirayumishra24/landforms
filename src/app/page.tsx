@@ -18,6 +18,7 @@ import { RestoreRegion } from '@/components/missions/RestoreRegion';
 import { FinalScore } from '@/components/stages/FinalScore';
 import { LearningSummary } from '@/components/stages/LearningSummary';
 import { TurnTransitionOverlay } from '@/components/ui/TurnTransitionOverlay';
+import { LandformSceneryBackground } from '@/components/layout/LandformSceneryBackground';
 
 export default function GamePage() {
   const {
@@ -58,7 +59,10 @@ export default function GamePage() {
   }, [turnTeam, currentStage]);
 
   return (
-    <div className="min-h-screen bg-maximalist-dots text-slate-900 flex flex-col justify-between selection:bg-yellow-300 selection:text-black">
+    <div className="relative min-h-screen text-slate-900 flex flex-col justify-between selection:bg-yellow-300 selection:text-black">
+      {/* Global Illustrated Landform Scenery Background */}
+      <LandformSceneryBackground />
+
       {/* Animated Turn Transition Announcement */}
       <TurnTransitionOverlay
         turnTeam={turnTeam}
