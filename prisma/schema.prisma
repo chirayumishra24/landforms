@@ -1,0 +1,45 @@
+// Prisma Schema for Landform Legends Educational Game
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model GameSession {
+  id               String      @id @default(uuid())
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  terraScore       Int         @default(0)
+  keeperScore      Int         @default(0)
+  regionHealth     Int         @default(0)
+  currentMission   Int         @default(1)
+  completedMissions String     @default("[]") // JSON array of completed mission IDs
+  winner           String?
+  knowledgeScore   Int         @default(0)
+  planningScore    Int         @default(0)
+  adaptationScore  Int         @default(0)
+  decisionScore    Int         @default(0)
+}
+
+model Question {
+  id          String   @id @default(uuid())
+  landform    String
+  category    String   // explorer, livelihood, animal, crisis, blitz
+  prompt      String
+  options     String   // JSON string array
+  correctIdx  Int
+  explanation String
+  points      Int      @default(100)
+}
+
+model RegionState {
+  id              String   @id @default(uuid())
+  sessionId       String   @unique
+  placedBuildings String   @default("[]") // JSON string of placed items
+  roadSegments    String   @default("[]") // JSON string of road coordinates
+  restorationTasks String  @default("[]") // JSON string of completed restoration tasks
+}
