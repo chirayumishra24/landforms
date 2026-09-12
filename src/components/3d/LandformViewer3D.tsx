@@ -23,6 +23,11 @@ export const LandformViewer3D: React.FC<Props> = ({
 
   const groupRef = useRef<THREE.Group | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
+  const autoRotateRef = useRef(autoRotate);
+
+  useEffect(() => {
+    autoRotateRef.current = autoRotate;
+  }, [autoRotate]);
 
   useEffect(() => {
     if (selectedHotspotName) {
@@ -36,8 +41,9 @@ export const LandformViewer3D: React.FC<Props> = ({
 
     // Scene, Camera, Renderer
     const scene = new THREE.Scene();
-    const width = container.clientWidth || 480;
-    const height = container.clientHeight || 340;
+    const rect = container.getBoundingClientRect();
+    const width = Math.round(rect.width || container.clientWidth || 600);
+    const height = Math.round(rect.height || container.clientHeight || 400);
 
     const camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 1000);
     camera.position.set(0, 9.5, 14.5);
@@ -45,10 +51,18 @@ export const LandformViewer3D: React.FC<Props> = ({
     cameraRef.current = camera;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(width, height, false);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+    renderer.domElement.style.width = '100%';
+    renderer.domElement.style.height = '100%';
+    renderer.domElement.style.display = 'block';
+    renderer.domElement.style.position = 'absolute';
+    renderer.domElement.style.top = '0';
+    renderer.domElement.style.left = '0';
+
     container.innerHTML = '';
     container.appendChild(renderer.domElement);
 
@@ -842,7 +856,7 @@ export const LandformViewer3D: React.FC<Props> = ({
       reqId = requestAnimationFrame(animate);
       const elapsedTime = clock.getElapsedTime();
 
-      if (autoRotate && !isDragging && dioramaGroup) {
+      if (autoRotateRef.current && !isDragging && dioramaGroup) {
         dioramaGroup.rotation.y += 0.005;
       }
 
@@ -851,19 +865,37 @@ export const LandformViewer3D: React.FC<Props> = ({
     };
     animate();
 
-    const handleResize = () => {
+    const updateSize = () => {
       if (!container) return;
-      const w = container.clientWidth;
-      const h = container.clientHeight;
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
+      const r = container.getBoundingClientRect();
+      const w = Math.round(r.width || container.clientWidth || 600);
+      const h = Math.round(r.height || container.clientHeight || 400);
+      if (w > 0 && h > 0) {
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        renderer.setSize(w, h, false);
+      }
     };
-    window.addEventListener('resize', handleResize);
+
+    const resizeObserver = new ResizeObserver(() => {
+      updateSize();
+    });
+    resizeObserver.observe(container);
+    if (container.parentElement) {
+      resizeObserver.observe(container.parentElement);
+    }
+
+    requestAnimationFrame(updateSize);
+    const timer1 = setTimeout(updateSize, 60);
+    const timer2 = setTimeout(updateSize, 200);
+    window.addEventListener('resize', updateSize);
 
     return () => {
       cancelAnimationFrame(reqId);
-      window.removeEventListener('resize', handleResize);
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', updateSize);
       container.removeEventListener('mousedown', onPointerDown);
       window.removeEventListener('mousemove', onPointerMove);
       window.removeEventListener('mouseup', onPointerUp);
@@ -876,7 +908,7 @@ export const LandformViewer3D: React.FC<Props> = ({
         container.removeChild(renderer.domElement);
       }
     };
-  }, [landform, autoRotate]);
+  }, [landform]);
 
   const handleZoom = (inDir: boolean) => {
     soundEngine.playClick();
@@ -919,7 +951,7 @@ export const LandformViewer3D: React.FC<Props> = ({
   return (
     <div className="relative w-full h-[340px] sm:h-[400px] rounded-3xl overflow-hidden bg-gradient-to-b from-sky-200 via-sky-100 to-amber-50/80 border-3 border-slate-900 shadow-[6px_6px_0px_0px_#0f172a] flex flex-col justify-between select-none">
       {/* 3D WebGL Canvas Mount */}
-      <div ref={mountRef} className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing" />
+      <div ref={mountRef} className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing overflow-hidden flex items-center justify-center" />
 
       {/* Top Controls Overlay */}
       <div className="relative z-20 p-3 flex items-center justify-between pointer-events-auto">
