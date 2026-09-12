@@ -61,38 +61,37 @@ export const TopScoreboard: React.FC<Props> = ({
       case 'mission_4': return 'Mission 4: Land & Livelihoods';
       case 'mission_5': return 'Mission 5: Geography Crisis';
       case 'blitz': return 'Bonus: Landform Blitz';
-      case 'restore': return 'Final Challenge: Restore the Region';
+      case 'restore': return 'Final Challenge: Restore Region';
       case 'final_score': return 'Championship Results';
       case 'learning_summary': return 'Pedagogical Debrief';
       default: return 'Landform Legends';
     }
   };
 
-  // If at very start or story, keep it sleek
   const isMinimal = currentStage === 'start';
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-slate-900/90 backdrop-blur-md border-b border-white/10 shadow-lg px-3 py-2 text-white transition-all">
+    <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b-3 border-slate-900 shadow-[0_4px_0px_0px_#0f172a] px-3 py-2 text-slate-900 transition-all select-none">
       <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
         {/* Brand & Mission */}
         <div className="flex items-center gap-3">
           <button
             onClick={onNavigateMap}
-            className="flex items-center gap-2 px-2.5 py-1 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 transition shadow-sm group"
+            className="flex items-center gap-2.5 px-3 py-1.5 rounded-2xl bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 border-2.5 border-slate-900 shadow-[3px_3px_0px_0px_#0f172a] hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all group"
             title="Open Interactive Map"
           >
-            <Compass className="w-5 h-5 text-emerald-200 group-hover:rotate-45 transition-transform" />
+            <Compass className="w-5 h-5 text-slate-950 group-hover:rotate-45 transition-transform" />
             <div className="text-left">
-              <span className="text-[10px] tracking-wider uppercase font-bold text-emerald-200 block leading-tight">Class 6 Geography</span>
-              <span className="font-extrabold text-sm tracking-tight text-white block leading-tight">LANDFORM LEGENDS</span>
+              <span className="text-[10px] tracking-wider uppercase font-black text-slate-900 block leading-tight">Class 6 Geography</span>
+              <span className="font-black text-sm tracking-tight text-slate-950 block leading-tight">LANDFORM LEGENDS</span>
             </div>
           </button>
 
           {!isMinimal && (
-            <div className="hidden md:flex items-center gap-2 bg-slate-800/80 px-3 py-1 rounded-xl border border-white/5">
-              <span className="text-xs text-slate-400 font-medium">Status:</span>
-              <span className="text-xs font-semibold text-emerald-400 flex items-center gap-1">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            <div className="hidden md:flex items-center gap-2 bg-amber-100/80 px-3 py-1.5 rounded-xl border-2 border-slate-900 shadow-[2px_2px_0px_0px_#0f172a]">
+              <span className="text-xs text-slate-700 font-bold">Phase:</span>
+              <span className="text-xs font-black text-slate-950 flex items-center gap-1">
+                <Sparkles className="w-3.5 h-3.5 text-amber-600" />
                 {getStageTitle(currentStage)}
               </span>
             </div>
@@ -101,7 +100,7 @@ export const TopScoreboard: React.FC<Props> = ({
 
         {/* Scoreboards for Teams */}
         {!isMinimal && (
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-3">
             {/* Team Terraformers Button */}
             <button
               onClick={() => {
@@ -109,27 +108,27 @@ export const TopScoreboard: React.FC<Props> = ({
                 if (turnTeam !== 'terraformers') onSwitchTurn();
               }}
               title="Click/Touch to activate Team Terraformers turn"
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-2xl border-2.5 transition-all cursor-pointer ${
                 turnTeam === 'terraformers'
-                  ? 'bg-blue-600/35 border-blue-400 ring-2 ring-blue-500/60 shadow-lg shadow-blue-500/30 scale-105'
-                  : 'bg-slate-800/60 border-blue-900/50 opacity-75 hover:opacity-100 hover:border-blue-400'
+                  ? 'bg-blue-100 border-blue-900 shadow-[4px_4px_0px_0px_#1e3a8a] scale-105'
+                  : 'bg-white border-slate-400 opacity-80 hover:opacity-100 hover:border-blue-600 shadow-[2px_2px_0px_0px_#94a3b8]'
               }`}
             >
-              <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-sm shadow">
+              <div className="w-8 h-8 rounded-xl bg-blue-500 border-2 border-slate-900 flex items-center justify-center text-sm shadow-[1px_1px_0px_0px_#0f172a]">
                 🔵
               </div>
               <div className="text-left">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] font-black tracking-wider text-blue-300 uppercase">Terraformers</span>
+                  <span className="text-[10px] font-black tracking-wider text-blue-900 uppercase">Terraformers</span>
                   {turnTeam === 'terraformers' ? (
-                    <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-blue-500 text-white font-extrabold animate-pulse">ACTIVE TURN</span>
+                    <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-blue-600 text-white font-black animate-pulse">ACTIVE TURN</span>
                   ) : (
-                    <span className="text-[9px] px-1 py-0.2 rounded-full bg-slate-700 text-slate-300">Tap to play</span>
+                    <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-slate-200 text-slate-700 font-bold">Tap turn</span>
                   )}
                 </div>
-                <div className="font-extrabold text-sm sm:text-base text-white flex items-center gap-1">
+                <div className="font-black text-sm sm:text-base text-slate-950 flex items-center gap-1">
                   ⭐ <span className="tabular-nums">{teams.terraformers.points.toLocaleString()}</span>
-                  <span className="text-[10px] text-blue-200 font-normal">LP</span>
+                  <span className="text-[10px] text-blue-700 font-bold">LP</span>
                 </div>
               </div>
             </button>
@@ -141,27 +140,27 @@ export const TopScoreboard: React.FC<Props> = ({
                 if (turnTeam !== 'earthkeepers') onSwitchTurn();
               }}
               title="Click/Touch to activate Team Earthkeepers turn"
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-2xl border-2.5 transition-all cursor-pointer ${
                 turnTeam === 'earthkeepers'
-                  ? 'bg-orange-600/35 border-orange-400 ring-2 ring-orange-500/60 shadow-lg shadow-orange-500/30 scale-105'
-                  : 'bg-slate-800/60 border-orange-900/50 opacity-75 hover:opacity-100 hover:border-orange-400'
+                  ? 'bg-orange-100 border-orange-900 shadow-[4px_4px_0px_0px_#c2410c] scale-105'
+                  : 'bg-white border-slate-400 opacity-80 hover:opacity-100 hover:border-orange-600 shadow-[2px_2px_0px_0px_#94a3b8]'
               }`}
             >
-              <div className="w-8 h-8 rounded-lg bg-orange-600 flex items-center justify-center text-sm shadow">
+              <div className="w-8 h-8 rounded-xl bg-orange-500 border-2 border-slate-900 flex items-center justify-center text-sm shadow-[1px_1px_0px_0px_#0f172a]">
                 🟠
               </div>
               <div className="text-left">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] font-black tracking-wider text-orange-300 uppercase">Earthkeepers</span>
+                  <span className="text-[10px] font-black tracking-wider text-orange-900 uppercase">Earthkeepers</span>
                   {turnTeam === 'earthkeepers' ? (
-                    <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-orange-500 text-white font-extrabold animate-pulse">ACTIVE TURN</span>
+                    <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-orange-600 text-white font-black animate-pulse">ACTIVE TURN</span>
                   ) : (
-                    <span className="text-[9px] px-1 py-0.2 rounded-full bg-slate-700 text-slate-300">Tap to play</span>
+                    <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-slate-200 text-slate-700 font-bold">Tap turn</span>
                   )}
                 </div>
-                <div className="font-extrabold text-sm sm:text-base text-white flex items-center gap-1">
+                <div className="font-black text-sm sm:text-base text-slate-950 flex items-center gap-1">
                   ⭐ <span className="tabular-nums">{teams.earthkeepers.points.toLocaleString()}</span>
-                  <span className="text-[10px] text-orange-200 font-normal">LP</span>
+                  <span className="text-[10px] text-orange-700 font-bold">LP</span>
                 </div>
               </div>
             </button>
@@ -169,16 +168,16 @@ export const TopScoreboard: React.FC<Props> = ({
         )}
 
         {/* Region Health & Controls */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-2">
           {!isMinimal && (
-            <div className="hidden lg:flex items-center gap-2 bg-slate-800/80 px-3 py-1 rounded-xl border border-white/5">
-              <HeartPulse className={`w-4 h-4 ${regionHealth >= 70 ? 'text-emerald-400 animate-pulse' : 'text-amber-400'}`} />
+            <div className="hidden lg:flex items-center gap-2 bg-emerald-50 px-3 py-1.5 rounded-2xl border-2 border-slate-900 shadow-[2px_2px_0px_0px_#0f172a]">
+              <HeartPulse className={`w-4 h-4 ${regionHealth >= 70 ? 'text-emerald-600 animate-pulse' : 'text-amber-600'}`} />
               <div>
-                <div className="flex items-center justify-between text-[10px] text-slate-300 gap-2">
-                  <span>REGION HEALTH</span>
-                  <span className="font-bold text-emerald-400">{regionHealth}%</span>
+                <div className="flex items-center justify-between text-[10px] text-slate-800 font-bold gap-2">
+                  <span>HEALTH</span>
+                  <span className="font-black text-emerald-700">{regionHealth}%</span>
                 </div>
-                <div className="w-20 bg-slate-700 h-1.5 rounded-full overflow-hidden mt-0.5">
+                <div className="w-20 bg-slate-200 h-2 rounded-full overflow-hidden border border-slate-900">
                   <div
                     className="h-full bg-gradient-to-r from-amber-400 via-emerald-400 to-teal-400 transition-all duration-500"
                     style={{ width: `${regionHealth}%` }}
@@ -188,32 +187,32 @@ export const TopScoreboard: React.FC<Props> = ({
             </div>
           )}
 
-          {/* Fullscreen Button for Smart Board */}
+          {/* Fullscreen Button */}
           <button
             onClick={toggleFullscreen}
-            className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-white/10 text-slate-300 hover:text-white transition flex items-center justify-center shadow-sm"
+            className="p-2 rounded-xl bg-yellow-300 hover:bg-yellow-400 border-2 border-slate-900 shadow-[2px_2px_0px_0px_#0f172a] text-slate-950 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition flex items-center justify-center cursor-pointer"
             title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen (Smart Board)"}
           >
             {isFullscreen ? (
-              <Minimize className="w-4 h-4 text-amber-400" />
+              <Minimize className="w-4 h-4 text-slate-950" />
             ) : (
-              <Maximize className="w-4 h-4 text-cyan-400" />
+              <Maximize className="w-4 h-4 text-slate-950" />
             )}
           </button>
 
           {/* Sound Toggle */}
           <button
             onClick={toggleSound}
-            className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-white/10 text-slate-300 hover:text-white transition"
+            className="p-2 rounded-xl bg-white hover:bg-slate-100 border-2 border-slate-900 shadow-[2px_2px_0px_0px_#0f172a] text-slate-900 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition cursor-pointer"
             title={isMuted ? "Unmute Sound" : "Mute Sound"}
           >
-            {isMuted ? <VolumeX className="w-4 h-4 text-red-400" /> : <Volume2 className="w-4 h-4 text-emerald-400" />}
+            {isMuted ? <VolumeX className="w-4 h-4 text-rose-600" /> : <Volume2 className="w-4 h-4 text-emerald-600" />}
           </button>
 
           {/* Reset Game */}
           <button
             onClick={onReset}
-            className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-white/10 text-slate-300 hover:text-white transition"
+            className="p-2 rounded-xl bg-white hover:bg-slate-100 border-2 border-slate-900 shadow-[2px_2px_0px_0px_#0f172a] text-slate-900 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition cursor-pointer"
             title="Reset Game"
           >
             <RefreshCw className="w-4 h-4 hover:rotate-180 transition-transform duration-500" />

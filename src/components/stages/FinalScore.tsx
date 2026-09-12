@@ -59,80 +59,80 @@ export const FinalScore: React.FC<Props> = ({
   };
 
   return (
-    <div className="relative min-h-[calc(100vh-60px)] p-4 sm:p-8 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white flex flex-col items-center justify-center select-none">
+    <div className="relative min-h-[calc(100vh-60px)] p-4 sm:p-8 text-slate-900 flex flex-col items-center justify-center select-none">
       <div className="max-w-4xl w-full mx-auto text-center">
         {/* Winner Announcement Trophy Banner */}
         <div className="mb-8">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/20 text-amber-300 text-xs sm:text-sm font-bold uppercase tracking-wider mb-3 border border-amber-500/40 animate-pulse">
-            <Sparkles className="w-4 h-4 text-amber-400" />
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-300 text-slate-900 text-xs sm:text-sm font-black uppercase tracking-wider mb-3 border-2.5 border-slate-900 shadow-[3px_3px_0px_0px_#0f172a] animate-bounce">
+            <Sparkles className="w-4 h-4 text-amber-800" />
             <span>Championship Trophy Awarded</span>
           </div>
 
-          <h2 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-white mb-2">
+          <h2 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-slate-900 mb-2">
             🏆 {isTie ? "IT'S A HISTORIC TIE!" : `${winner.name.toUpperCase()} WINS!`}
           </h2>
-          <p className="text-emerald-300 text-base sm:text-xl font-bold italic max-w-xl mx-auto">
+          <div className="inline-block px-4 py-1.5 rounded-full bg-emerald-200 border-2 border-slate-900 text-emerald-950 font-black text-sm sm:text-base shadow-[2px_2px_0px_0px_#0f172a]">
             &quot;You understood how land shapes life. Different land. Different life.&quot;
-          </p>
+          </div>
         </div>
 
         {/* Head to Head Team Cards Comparison */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto mb-8">
           {/* Team Terraformers Card */}
-          <div className={`p-6 sm:p-8 rounded-3xl border-2 text-left transition-all ${
+          <div className={`p-6 sm:p-8 rounded-3xl border-3 text-left transition-all ${
             winner.id === 'terraformers'
-              ? 'bg-gradient-to-b from-blue-900/60 to-blue-950/80 border-blue-400 ring-4 ring-blue-500/30 shadow-2xl shadow-blue-500/20'
-              : 'bg-slate-900/80 border-slate-700/60'
+              ? 'bg-blue-100 border-slate-900 ring-4 ring-blue-400 shadow-[8px_8px_0px_0px_#0f172a]'
+              : 'bg-white border-slate-900/60 shadow-[4px_4px_0px_0px_#0f172a]'
           }`}>
             <div className="flex items-center justify-between mb-3">
-              <span className="text-3xl">🗺️</span>
-              <span className="text-xs px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 font-bold">
+              <span className="text-4xl">🗺️</span>
+              <span className="text-xs px-3 py-1 rounded-full bg-blue-300 border-2 border-slate-900 text-slate-900 font-black shadow-[2px_2px_0px_0px_#0f172a]">
                 TEAM TERRAFORMERS
               </span>
             </div>
 
-            <div className="text-3xl sm:text-4xl font-black text-white mb-4 flex items-center gap-2">
+            <div className="text-3xl sm:text-4xl font-black text-slate-900 mb-4 flex items-center gap-2">
               ⭐ <span className="tabular-nums">{terra.points.toLocaleString()}</span>
-              <span className="text-sm font-normal text-blue-300">LIFE POINTS</span>
+              <span className="text-xs font-black px-2 py-0.5 rounded-md bg-blue-200 text-blue-900 border border-blue-400">LIFE POINTS</span>
             </div>
 
-            <div className="space-y-2.5 text-xs">
+            <div className="space-y-3 text-xs font-bold">
               <div>
-                <div className="flex justify-between text-slate-300 mb-1">
+                <div className="flex justify-between text-slate-700 mb-1">
                   <span>Landform Knowledge</span>
-                  <span className="font-bold text-blue-300">{getPercentage(terra.stats.knowledge)}%</span>
+                  <span className="font-black text-blue-900">{getPercentage(terra.stats.knowledge)}%</span>
                 </div>
-                <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                <div className="w-full bg-slate-200 h-2.5 rounded-full border border-slate-900 overflow-hidden">
                   <div className="h-full bg-blue-500" style={{ width: `${getPercentage(terra.stats.knowledge)}%` }} />
                 </div>
               </div>
 
               <div>
-                <div className="flex justify-between text-slate-300 mb-1">
+                <div className="flex justify-between text-slate-700 mb-1">
                   <span>Spatial Planning</span>
-                  <span className="font-bold text-blue-300">{getPercentage(terra.stats.planning)}%</span>
+                  <span className="font-black text-blue-900">{getPercentage(terra.stats.planning)}%</span>
                 </div>
-                <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                <div className="w-full bg-slate-200 h-2.5 rounded-full border border-slate-900 overflow-hidden">
                   <div className="h-full bg-blue-500" style={{ width: `${getPercentage(terra.stats.planning)}%` }} />
                 </div>
               </div>
 
               <div>
-                <div className="flex justify-between text-slate-300 mb-1">
+                <div className="flex justify-between text-slate-700 mb-1">
                   <span>Environmental Adaptation</span>
-                  <span className="font-bold text-blue-300">{getPercentage(terra.stats.adaptation)}%</span>
+                  <span className="font-black text-blue-900">{getPercentage(terra.stats.adaptation)}%</span>
                 </div>
-                <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                <div className="w-full bg-slate-200 h-2.5 rounded-full border border-slate-900 overflow-hidden">
                   <div className="h-full bg-blue-500" style={{ width: `${getPercentage(terra.stats.adaptation)}%` }} />
                 </div>
               </div>
 
               <div>
-                <div className="flex justify-between text-slate-300 mb-1">
+                <div className="flex justify-between text-slate-700 mb-1">
                   <span>Hazard Decision Making</span>
-                  <span className="font-bold text-blue-300">{getPercentage(terra.stats.decisions)}%</span>
+                  <span className="font-black text-blue-900">{getPercentage(terra.stats.decisions)}%</span>
                 </div>
-                <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                <div className="w-full bg-slate-200 h-2.5 rounded-full border border-slate-900 overflow-hidden">
                   <div className="h-full bg-blue-500" style={{ width: `${getPercentage(terra.stats.decisions)}%` }} />
                 </div>
               </div>
@@ -140,60 +140,60 @@ export const FinalScore: React.FC<Props> = ({
           </div>
 
           {/* Team Earthkeepers Card */}
-          <div className={`p-6 sm:p-8 rounded-3xl border-2 text-left transition-all ${
+          <div className={`p-6 sm:p-8 rounded-3xl border-3 text-left transition-all ${
             winner.id === 'earthkeepers'
-              ? 'bg-gradient-to-b from-orange-900/60 to-orange-950/80 border-orange-400 ring-4 ring-orange-500/30 shadow-2xl shadow-orange-500/20'
-              : 'bg-slate-900/80 border-slate-700/60'
+              ? 'bg-orange-100 border-slate-900 ring-4 ring-orange-400 shadow-[8px_8px_0px_0px_#0f172a]'
+              : 'bg-white border-slate-900/60 shadow-[4px_4px_0px_0px_#0f172a]'
           }`}>
             <div className="flex items-center justify-between mb-3">
-              <span className="text-3xl">🔭</span>
-              <span className="text-xs px-3 py-1 rounded-full bg-orange-500/20 text-orange-300 font-bold">
+              <span className="text-4xl">🔭</span>
+              <span className="text-xs px-3 py-1 rounded-full bg-orange-300 border-2 border-slate-900 text-slate-900 font-black shadow-[2px_2px_0px_0px_#0f172a]">
                 TEAM EARTHKEEPERS
               </span>
             </div>
 
-            <div className="text-3xl sm:text-4xl font-black text-white mb-4 flex items-center gap-2">
+            <div className="text-3xl sm:text-4xl font-black text-slate-900 mb-4 flex items-center gap-2">
               ⭐ <span className="tabular-nums">{keeper.points.toLocaleString()}</span>
-              <span className="text-sm font-normal text-orange-300">LIFE POINTS</span>
+              <span className="text-xs font-black px-2 py-0.5 rounded-md bg-orange-200 text-orange-900 border border-orange-400">LIFE POINTS</span>
             </div>
 
-            <div className="space-y-2.5 text-xs">
+            <div className="space-y-3 text-xs font-bold">
               <div>
-                <div className="flex justify-between text-slate-300 mb-1">
+                <div className="flex justify-between text-slate-700 mb-1">
                   <span>Landform Knowledge</span>
-                  <span className="font-bold text-orange-300">{getPercentage(keeper.stats.knowledge)}%</span>
+                  <span className="font-black text-orange-900">{getPercentage(keeper.stats.knowledge)}%</span>
                 </div>
-                <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                <div className="w-full bg-slate-200 h-2.5 rounded-full border border-slate-900 overflow-hidden">
                   <div className="h-full bg-orange-500" style={{ width: `${getPercentage(keeper.stats.knowledge)}%` }} />
                 </div>
               </div>
 
               <div>
-                <div className="flex justify-between text-slate-300 mb-1">
+                <div className="flex justify-between text-slate-700 mb-1">
                   <span>Spatial Planning</span>
-                  <span className="font-bold text-orange-300">{getPercentage(keeper.stats.planning)}%</span>
+                  <span className="font-black text-orange-900">{getPercentage(keeper.stats.planning)}%</span>
                 </div>
-                <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                <div className="w-full bg-slate-200 h-2.5 rounded-full border border-slate-900 overflow-hidden">
                   <div className="h-full bg-orange-500" style={{ width: `${getPercentage(keeper.stats.planning)}%` }} />
                 </div>
               </div>
 
               <div>
-                <div className="flex justify-between text-slate-300 mb-1">
+                <div className="flex justify-between text-slate-700 mb-1">
                   <span>Environmental Adaptation</span>
-                  <span className="font-bold text-orange-300">{getPercentage(keeper.stats.adaptation)}%</span>
+                  <span className="font-black text-orange-900">{getPercentage(keeper.stats.adaptation)}%</span>
                 </div>
-                <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                <div className="w-full bg-slate-200 h-2.5 rounded-full border border-slate-900 overflow-hidden">
                   <div className="h-full bg-orange-500" style={{ width: `${getPercentage(keeper.stats.adaptation)}%` }} />
                 </div>
               </div>
 
               <div>
-                <div className="flex justify-between text-slate-300 mb-1">
+                <div className="flex justify-between text-slate-700 mb-1">
                   <span>Hazard Decision Making</span>
-                  <span className="font-bold text-orange-300">{getPercentage(keeper.stats.decisions)}%</span>
+                  <span className="font-black text-orange-900">{getPercentage(keeper.stats.decisions)}%</span>
                 </div>
-                <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                <div className="w-full bg-slate-200 h-2.5 rounded-full border border-slate-900 overflow-hidden">
                   <div className="h-full bg-orange-500" style={{ width: `${getPercentage(keeper.stats.decisions)}%` }} />
                 </div>
               </div>
@@ -205,7 +205,7 @@ export const FinalScore: React.FC<Props> = ({
         <div className="flex flex-wrap items-center justify-center gap-4">
           <button
             onClick={() => { soundEngine.playClick(); onPlayAgain(); }}
-            className="px-6 py-3.5 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-white/10 text-xs font-bold text-slate-300 flex items-center gap-2 transition"
+            className="px-6 py-3.5 rounded-2xl bg-white hover:bg-slate-100 border-2.5 border-slate-900 text-xs font-black text-slate-900 shadow-[3px_3px_0px_0px_#0f172a] flex items-center gap-2 transition transform active:scale-95"
           >
             <RotateCcw className="w-4 h-4" />
             <span>Play New Expedition</span>
@@ -213,7 +213,7 @@ export const FinalScore: React.FC<Props> = ({
 
           <button
             onClick={() => { soundEngine.playClick(); onContinue(); }}
-            className="px-10 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 text-slate-950 font-black text-sm sm:text-base shadow-xl flex items-center gap-2 transition transform hover:scale-105 active:scale-95"
+            className="px-10 py-3.5 rounded-2xl bg-emerald-400 hover:bg-emerald-300 border-2.5 border-slate-900 text-slate-900 font-black text-sm sm:text-base shadow-[4px_4px_0px_0px_#0f172a] flex items-center gap-2 transition transform hover:scale-105 active:scale-95"
           >
             <span>WHAT DID WE DISCOVER? (LEARNING SUMMARY)</span>
             <ArrowRight className="w-5 h-5" />

@@ -917,14 +917,14 @@ export const LandformViewer3D: React.FC<Props> = ({
   const currentHotspots = hotspotsByLandform[landform] || [];
 
   return (
-    <div className="relative w-full h-[340px] sm:h-[400px] rounded-3xl overflow-hidden bg-gradient-to-b from-sky-950/80 via-slate-900 to-slate-950 border-2 border-white/20 shadow-2xl flex flex-col justify-between select-none">
+    <div className="relative w-full h-[340px] sm:h-[400px] rounded-3xl overflow-hidden bg-gradient-to-b from-sky-200 via-sky-100 to-amber-50/80 border-3 border-slate-900 shadow-[6px_6px_0px_0px_#0f172a] flex flex-col justify-between select-none">
       {/* 3D WebGL Canvas Mount */}
       <div ref={mountRef} className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing" />
 
       {/* Top Controls Overlay */}
       <div className="relative z-20 p-3 flex items-center justify-between pointer-events-auto">
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-black/60 backdrop-blur-md border border-white/15 text-xs font-bold text-white shadow-lg">
-          <Compass className="w-4 h-4 text-cyan-400 animate-spin" />
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-white/95 backdrop-blur-md border-2 border-slate-900 text-xs font-black text-slate-950 shadow-[2px_2px_0px_0px_#0f172a]">
+          <Compass className="w-4 h-4 text-blue-600 animate-spin" />
           <span className="capitalize text-sm">{landform} 3D Diorama</span>
         </div>
 
@@ -934,8 +934,8 @@ export const LandformViewer3D: React.FC<Props> = ({
               soundEngine.playClick();
               setAutoRotate(prev => !prev);
             }}
-            className={`p-2 rounded-xl border backdrop-blur-md text-xs transition ${
-              autoRotate ? 'bg-cyan-500/30 border-cyan-400 text-cyan-200' : 'bg-black/60 border-white/15 text-slate-300'
+            className={`p-2 rounded-xl border-2 border-slate-900 shadow-[2px_2px_0px_0px_#0f172a] text-xs font-black transition active:translate-x-0.5 active:translate-y-0.5 active:shadow-none ${
+              autoRotate ? 'bg-yellow-300 text-slate-950' : 'bg-white text-slate-700 hover:bg-slate-100'
             }`}
             title="Toggle Auto-Rotation"
           >
@@ -943,14 +943,14 @@ export const LandformViewer3D: React.FC<Props> = ({
           </button>
           <button
             onClick={() => handleZoom(true)}
-            className="p-2 rounded-xl bg-black/60 hover:bg-black/80 border border-white/15 text-white backdrop-blur-md transition"
+            className="p-2 rounded-xl bg-white hover:bg-slate-100 border-2 border-slate-900 shadow-[2px_2px_0px_0px_#0f172a] text-slate-950 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition"
             title="Zoom In"
           >
             <ZoomIn className="w-4 h-4" />
           </button>
           <button
             onClick={() => handleZoom(false)}
-            className="p-2 rounded-xl bg-black/60 hover:bg-black/80 border border-white/15 text-white backdrop-blur-md transition"
+            className="p-2 rounded-xl bg-white hover:bg-slate-100 border-2 border-slate-900 shadow-[2px_2px_0px_0px_#0f172a] text-slate-950 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition"
             title="Zoom Out"
           >
             <ZoomOut className="w-4 h-4" />
@@ -959,14 +959,14 @@ export const LandformViewer3D: React.FC<Props> = ({
       </div>
 
       {/* Bottom Interactive Feature Hotspots (Smart Board Touch Buttons) */}
-      <div className="relative z-20 p-3 bg-gradient-to-t from-slate-950 via-slate-950/90 to-transparent flex flex-col gap-2 pointer-events-auto">
+      <div className="relative z-20 p-3 bg-gradient-to-t from-white/95 via-white/80 to-transparent flex flex-col gap-2 pointer-events-auto">
         <div className="flex items-center justify-between">
-          <span className="text-[11px] uppercase font-extrabold tracking-wider text-amber-300 flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+          <span className="text-[11px] uppercase font-black tracking-wider text-slate-900 flex items-center gap-1.5 bg-yellow-300/80 px-2.5 py-0.5 rounded-full border border-slate-900 shadow-[1px_1px_0px_0px_#0f172a]">
+            <Sparkles className="w-3.5 h-3.5 text-amber-700" />
             <span>Interactive 3D Pins • Tap to Scan</span>
           </span>
-          <span className="text-[11px] text-slate-400 flex items-center gap-1">
-            <Eye className="w-3 h-3 text-cyan-400" />
+          <span className="text-[11px] text-slate-700 font-bold flex items-center gap-1">
+            <Eye className="w-3.5 h-3.5 text-blue-600" />
             <span>Drag 360°</span>
           </span>
         </div>
@@ -983,10 +983,10 @@ export const LandformViewer3D: React.FC<Props> = ({
                   setActiveHotspot(hs.name);
                   if (onSelectHotspot) onSelectHotspot(hs.name, hs.desc);
                 }}
-                className={`p-2.5 rounded-2xl border text-left transition-all flex items-center gap-2 ${
+                className={`p-2.5 rounded-2xl border-2.5 border-slate-900 text-left transition-all flex items-center gap-2 cursor-pointer ${
                   isSelected
-                    ? 'bg-cyan-500/40 border-cyan-300 ring-2 ring-cyan-400 text-white shadow-xl scale-[1.02]'
-                    : 'bg-slate-900/90 hover:bg-slate-800 border-white/15 text-slate-200'
+                    ? 'bg-yellow-300 text-slate-950 shadow-[4px_4px_0px_0px_#0f172a] ring-2 ring-yellow-400 scale-[1.02]'
+                    : 'bg-white hover:bg-amber-50 text-slate-900 shadow-[3px_3px_0px_0px_#0f172a] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none'
                 }`}
               >
                 <span className="text-xl shrink-0">{hs.icon}</span>
@@ -998,10 +998,10 @@ export const LandformViewer3D: React.FC<Props> = ({
 
         {/* Hotspot Description Instant Insight */}
         {activeHotspot && (
-          <div className="p-2.5 rounded-xl bg-slate-900/95 border border-cyan-400/60 text-xs text-cyan-100 flex items-start gap-2 shadow-2xl animate-fade-in">
-            <span className="text-amber-300 text-base">💡</span>
+          <div className="p-2.5 rounded-2xl bg-amber-100 border-2.5 border-slate-900 text-xs text-slate-950 font-bold flex items-start gap-2 shadow-[3px_3px_0px_0px_#0f172a] animate-fade-in">
+            <span className="text-amber-600 text-base">💡</span>
             <span>
-              <strong className="text-white">{activeHotspot}:</strong>{' '}
+              <strong className="text-slate-950">{activeHotspot}:</strong>{' '}
               {currentHotspots.find(h => h.name === activeHotspot)?.desc}
             </span>
           </div>

@@ -99,26 +99,26 @@ export const MainGameMap: React.FC<Props> = ({
   };
 
   return (
-    <div className="relative min-h-[calc(100vh-60px)] p-3 sm:p-6 bg-slate-950 text-white flex flex-col items-center justify-between select-none">
+    <div className="relative min-h-[calc(100vh-60px)] p-3 sm:p-6 bg-transparent text-slate-900 flex flex-col items-center justify-between select-none">
       {/* Map Header Controls */}
       <div className="w-full max-w-7xl flex flex-wrap items-center justify-between gap-3 mb-3">
         <div>
-          <h2 className="text-2xl sm:text-3xl font-black tracking-tight flex items-center gap-2">
+          <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-950 flex items-center gap-2">
             <span>🗺️ REGIONAL TACTICAL MAP</span>
-            <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">
+            <span className="text-xs px-3 py-1 rounded-full bg-emerald-200 text-emerald-950 font-black border-2 border-slate-900 shadow-[2px_2px_0px_0px_#0f172a]">
               Interactive Territory
             </span>
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400">
+          <p className="text-xs sm:text-sm text-slate-800 font-bold">
             Click on unlocked mission sites to survey the geography, make decisions, and evolve the landscape.
           </p>
         </div>
 
         {/* Region Evolution Pill */}
-        <div className="flex items-center gap-3 bg-slate-900/90 border border-white/10 px-4 py-2 rounded-2xl shadow-lg">
+        <div className="flex items-center gap-3 bg-white border-2.5 border-slate-900 px-4 py-2 rounded-2xl shadow-[4px_4px_0px_0px_#0f172a]">
           <div className="text-left">
-            <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Region Evolution</div>
-            <div className="text-xs sm:text-sm font-extrabold text-emerald-400">
+            <div className="text-[10px] uppercase font-black text-slate-600 tracking-wider">Region Evolution</div>
+            <div className="text-xs sm:text-sm font-black text-emerald-700">
               {regionHealth < 25 && "Stage 0: Uncharted Wilderness"}
               {regionHealth >= 25 && regionHealth < 50 && "Stage 1: First Settlements (25%)"}
               {regionHealth >= 50 && regionHealth < 75 && "Stage 2: Agricultural Bloom (50%)"}
@@ -133,7 +133,7 @@ export const MainGameMap: React.FC<Props> = ({
       </div>
 
       {/* Main Interactive Geographic Map Canvas */}
-      <div className="relative w-full max-w-7xl aspect-[16/9] max-h-[72vh] rounded-3xl overflow-hidden border-2 border-white/15 shadow-2xl bg-slate-900">
+      <div className="relative w-full max-w-7xl aspect-[16/9] max-h-[72vh] rounded-3xl overflow-hidden border-3 border-slate-900 shadow-[6px_6px_0px_0px_#0f172a] bg-sky-100">
         {/* SVG Detailed Geographic Illustrated Terrain */}
         <svg
           viewBox="0 0 1200 675"
@@ -387,12 +387,12 @@ export const MainGameMap: React.FC<Props> = ({
 
                 {/* Node Label Ribbon */}
                 <div
-                  className={`mt-1.5 px-2.5 py-0.5 rounded-xl text-[10px] sm:text-xs font-black tracking-wide whitespace-nowrap shadow-md border backdrop-blur-md transition-colors ${
+                  className={`mt-1.5 px-3 py-1 rounded-xl text-[10px] sm:text-xs font-black tracking-wide whitespace-nowrap border-2 border-slate-900 transition-colors ${
                     isComplete
-                      ? 'bg-emerald-900/90 text-emerald-200 border-emerald-500/50'
+                      ? 'bg-emerald-200 text-emerald-950 shadow-[2px_2px_0px_0px_#0f172a]'
                       : unlocked
-                      ? 'bg-slate-900/95 text-white border-amber-400/60'
-                      : 'bg-slate-900/80 text-slate-400 border-slate-700'
+                      ? 'bg-yellow-300 text-slate-950 shadow-[3px_3px_0px_0px_#0f172a]'
+                      : 'bg-slate-200 text-slate-600 border-slate-400'
                   }`}
                 >
                   {isComplete ? `✓ M${m.number}: DONE` : `M${m.number}: ${m.title}`}
@@ -414,10 +414,10 @@ export const MainGameMap: React.FC<Props> = ({
               isBlitzUnlocked ? 'hover:scale-110 cursor-pointer animate-bounce' : 'opacity-60 cursor-not-allowed'
             }`}
           >
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 border-2 border-cyan-200 text-white flex items-center justify-center text-xl shadow-xl">
+            <div className="w-12 h-12 rounded-2xl bg-cyan-400 border-2.5 border-slate-900 text-slate-950 flex items-center justify-center text-xl shadow-[3px_3px_0px_0px_#0f172a]">
               ⚡
             </div>
-            <span className="mt-1 px-2 py-0.5 rounded-lg bg-slate-900/90 border border-cyan-500/50 text-[10px] sm:text-xs font-bold text-cyan-300">
+            <span className="mt-1 px-2.5 py-0.5 rounded-xl bg-white border-2 border-slate-900 text-[10px] sm:text-xs font-black text-slate-950 shadow-[2px_2px_0px_0px_#0f172a]">
               Blitz 45s
             </span>
           </button>
@@ -435,42 +435,42 @@ export const MainGameMap: React.FC<Props> = ({
               isRestoreUnlocked ? 'hover:scale-110 cursor-pointer' : 'opacity-60 cursor-not-allowed'
             }`}
           >
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 via-orange-500 to-red-600 border-2 border-yellow-200 text-white flex items-center justify-center text-2xl shadow-2xl ring-4 ring-amber-400/40">
+            <div className="w-14 h-14 rounded-2xl bg-amber-400 border-3 border-slate-900 text-slate-950 flex items-center justify-center text-2xl shadow-[4px_4px_0px_0px_#0f172a] ring-2 ring-yellow-400">
               🏆
             </div>
-            <span className="mt-1 px-2.5 py-0.5 rounded-lg bg-slate-900/95 border border-amber-400 text-[10px] sm:text-xs font-black text-amber-300 shadow-md">
+            <span className="mt-1 px-2.5 py-0.5 rounded-xl bg-yellow-300 border-2 border-slate-900 text-[10px] sm:text-xs font-black text-slate-950 shadow-[2px_2px_0px_0px_#0f172a]">
               Final Challenge
             </span>
           </button>
         </div>
 
         {/* Floating Landform Terrain Identification Badges */}
-        <div className="absolute top-4 left-6 pointer-events-none flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-900/80 backdrop-blur-md border border-white/10 text-xs font-bold text-slate-300">
-          🏔️ Alpine Mountain Ridge
+        <div className="absolute top-4 left-6 pointer-events-none flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/95 border-2 border-slate-900 text-xs font-black text-slate-950 shadow-[2px_2px_0px_0px_#0f172a]">
+          🏔️ Alpine Mountains
         </div>
-        <div className="absolute top-4 right-6 pointer-events-none flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-900/80 backdrop-blur-md border border-white/10 text-xs font-bold text-slate-300">
-          🟫 Elevated Mineral Plateau
+        <div className="absolute top-4 right-6 pointer-events-none flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/95 border-2 border-slate-900 text-xs font-black text-slate-950 shadow-[2px_2px_0px_0px_#0f172a]">
+          🟫 Mineral Plateau
         </div>
-        <div className="absolute bottom-6 left-6 pointer-events-none flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-900/80 backdrop-blur-md border border-white/10 text-xs font-bold text-slate-300">
-          🏞️ River Valley Corridor
+        <div className="absolute bottom-6 left-6 pointer-events-none flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/95 border-2 border-slate-900 text-xs font-black text-slate-950 shadow-[2px_2px_0px_0px_#0f172a]">
+          🏞️ River Valley
         </div>
-        <div className="absolute bottom-6 right-28 pointer-events-none flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-900/80 backdrop-blur-md border border-white/10 text-xs font-bold text-slate-300">
-          🌊 Coastal Port & Estuary
+        <div className="absolute bottom-6 right-28 pointer-events-none flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/95 border-2 border-slate-900 text-xs font-black text-slate-950 shadow-[2px_2px_0px_0px_#0f172a]">
+          🌊 Coastal Port
         </div>
       </div>
 
       {/* Quick Launch Bottom Bar */}
-      <div className="w-full max-w-7xl mt-3 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-400 bg-slate-900/80 p-3 rounded-2xl border border-white/5">
+      <div className="w-full max-w-7xl mt-3 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-800 font-bold bg-white p-3 rounded-2xl border-2.5 border-slate-900 shadow-[4px_4px_0px_0px_#0f172a]">
         <div className="flex items-center gap-2">
-          <Compass className="w-4 h-4 text-emerald-400" />
-          <span>Completed Missions: <strong className="text-white">{completedMissions.length} / 5</strong></span>
+          <Compass className="w-4 h-4 text-emerald-600" />
+          <span>Completed Missions: <strong className="text-slate-950 font-black">{completedMissions.length} / 5</strong></span>
         </div>
 
         <div className="flex items-center gap-2">
           {completedMissions.length === 5 && (
             <button
               onClick={() => onSelectMission('restore')}
-              className="px-4 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black flex items-center gap-1.5 animate-pulse"
+              className="px-5 py-2 rounded-2xl bg-yellow-300 hover:bg-yellow-400 border-2.5 border-slate-900 text-slate-950 font-black shadow-[3px_3px_0px_0px_#0f172a] flex items-center gap-1.5 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none cursor-pointer animate-bounce"
             >
               <span>RESTORE THE REGION ➔</span>
             </button>

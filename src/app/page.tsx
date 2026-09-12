@@ -41,7 +41,7 @@ export default function GamePage() {
   } = useGameState();
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col justify-between">
+    <div className="min-h-screen bg-maximalist-dots text-slate-900 flex flex-col justify-between selection:bg-yellow-300 selection:text-black">
       {/* Persistent Top Scoreboard HUD */}
       <TopScoreboard
         currentStage={currentStage}

@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BLITZ_QUESTIONS } from '@/data/blitzQuestions';
-import { Timer, Zap, Sparkles, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Timer, Zap, Trophy, CheckCircle2, Sparkles } from 'lucide-react';
 import { soundEngine } from '@/utils/soundEngine';
 
 interface Props {
@@ -11,31 +11,30 @@ interface Props {
 }
 
 export const LandformBlitz: React.FC<Props> = ({ onComplete, onAwardPoints }) => {
-  const [timeLeft, setTimeLeft] = useState<number>(45);
-  const [isStarted, setIsStarted] = useState<boolean>(false);
-  const [isFinished, setIsFinished] = useState<boolean>(false);
-
-  const [questionIdx, setQuestionIdx] = useState<number>(0);
-  const [score, setScore] = useState<number>(0);
-  const [correctCount, setCorrectCount] = useState<number>(0);
-  const [streak, setStreak] = useState<number>(0);
+  const [timeLeft, setTimeLeft] = useState(45);
+  const [isStarted, setIsStarted] = useState(false);
+  const [isFinished, setIsFinished] = useState(false);
+  const [questionIdx, setQuestionIdx] = useState(0);
+  const [score, setScore] = useState(0);
+  const [streak, setStreak] = useState(0);
+  const [correctCount, setCorrectCount] = useState(0);
   const [answeredFeedback, setAnsweredFeedback] = useState<{ isCorrect: boolean; text: string } | null>(null);
 
-  // Shuffle questions once on start
-  const [questions, setQuestions] = useState(BLITZ_QUESTIONS);
+  // Shuffle questions randomly when entering blitz
+  const [questions, setQuestions] = useState(() => {
+    return [...BLITZ_QUESTIONS].sort(() => Math.random() - 0.5);
+  });
 
   const startBlitz = () => {
     soundEngine.playClick();
-    // Shuffle
-    const shuffled = [...BLITZ_QUESTIONS].sort(() => Math.random() - 0.5);
-    setQuestions(shuffled);
-    setQuestionIdx(0);
-    setTimeLeft(45);
-    setScore(0);
-    setCorrectCount(0);
-    setStreak(0);
     setIsStarted(true);
     setIsFinished(false);
+    setTimeLeft(45);
+    setScore(0);
+    setStreak(0);
+    setCorrectCount(0);
+    setQuestionIdx(0);
+    setAnsweredFeedback(null);
   };
 
   useEffect(() => {
@@ -84,7 +83,6 @@ export const LandformBlitz: React.FC<Props> = ({ onComplete, onAwardPoints }) =>
       });
     }
 
-    // Auto proceed to next question after brief 0.5s pause
     setTimeout(() => {
       setAnsweredFeedback(null);
       setQuestionIdx(prev => prev + 1);
@@ -92,37 +90,37 @@ export const LandformBlitz: React.FC<Props> = ({ onComplete, onAwardPoints }) =>
   };
 
   return (
-    <div className="relative min-h-[calc(100vh-60px)] p-4 sm:p-6 bg-slate-950 text-white flex flex-col items-center justify-center select-none">
+    <div className="relative min-h-[calc(100vh-60px)] p-4 sm:p-6 bg-transparent text-slate-900 flex flex-col items-center justify-center select-none">
       <div className="max-w-2xl w-full mx-auto">
         {/* Not Started State */}
         {!isStarted && !isFinished && (
-          <div className="p-8 sm:p-12 rounded-3xl bg-slate-900 border border-cyan-500/40 text-center shadow-2xl space-y-6">
-            <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-cyan-400 to-blue-600 text-white text-4xl flex items-center justify-center mx-auto shadow-lg shadow-cyan-500/40 animate-pulse">
+          <div className="p-8 sm:p-12 rounded-3xl bg-white border-3 border-slate-900 text-center shadow-[6px_6px_0px_0px_#0f172a] space-y-6">
+            <div className="w-20 h-20 rounded-3xl bg-cyan-400 border-2.5 border-slate-900 text-slate-950 text-4xl flex items-center justify-center mx-auto shadow-[3px_3px_0px_0px_#0f172a] animate-pulse">
               ⚡
             </div>
 
             <div>
-              <span className="text-xs font-bold text-cyan-400 uppercase tracking-widest block mb-1">Bonus Round</span>
-              <h2 className="text-3xl sm:text-5xl font-black text-white">LANDFORM BLITZ</h2>
-              <p className="text-slate-300 text-sm sm:text-base mt-2 max-w-md mx-auto">
+              <span className="text-xs font-black text-cyan-700 uppercase tracking-widest block mb-1">Bonus Round</span>
+              <h2 className="text-3xl sm:text-5xl font-black text-slate-950">LANDFORM BLITZ</h2>
+              <p className="text-slate-800 text-sm sm:text-base font-bold mt-2 max-w-md mx-auto">
                 45 seconds on the clock! Rapid-fire geography questions. Build a streak to multiply your Life Points!
               </p>
             </div>
 
-            <div className="flex items-center justify-center gap-6 text-sm font-semibold text-slate-300">
+            <div className="flex items-center justify-center gap-6 text-sm font-black text-slate-900">
               <div className="flex items-center gap-2">
-                <Timer className="w-5 h-5 text-cyan-400" />
+                <Timer className="w-5 h-5 text-cyan-600" />
                 <span>45s Timer</span>
               </div>
               <div className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-amber-400" />
+                <Sparkles className="w-5 h-5 text-amber-500" />
                 <span>+50 LP per correct answer</span>
               </div>
             </div>
 
             <button
               onClick={startBlitz}
-              className="px-10 py-4 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black text-lg shadow-xl shadow-cyan-500/30 transition transform hover:scale-105 active:scale-95"
+              className="px-10 py-4 rounded-2xl bg-yellow-300 hover:bg-yellow-400 border-3 border-slate-900 text-slate-950 font-black text-lg shadow-[4px_4px_0px_0px_#0f172a] transition transform hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none cursor-pointer"
             >
               START THE CLOCK ➔
             </button>
@@ -131,19 +129,19 @@ export const LandformBlitz: React.FC<Props> = ({ onComplete, onAwardPoints }) =>
 
         {/* Active Blitz Play State */}
         {isStarted && !isFinished && (
-          <div className="p-6 sm:p-8 rounded-3xl bg-slate-900 border border-white/15 shadow-2xl space-y-6">
+          <div className="p-6 sm:p-8 rounded-3xl bg-white border-3 border-slate-900 shadow-[6px_6px_0px_0px_#0f172a] space-y-6">
             {/* Top Bar: Timer, Score, Streak */}
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+            <div className="flex items-center justify-between border-b-2 border-slate-900 pb-4">
               {/* Timer Gauge */}
               <div className="flex items-center gap-2">
-                <div className={`p-2 rounded-xl flex items-center justify-center ${
-                  timeLeft <= 10 ? 'bg-red-500 text-white animate-ping' : 'bg-cyan-500/20 text-cyan-400'
+                <div className={`p-2.5 rounded-2xl border-2 border-slate-900 flex items-center justify-center shadow-[2px_2px_0px_0px_#0f172a] ${
+                  timeLeft <= 10 ? 'bg-rose-500 text-white animate-ping' : 'bg-cyan-200 text-cyan-950'
                 }`}>
                   <Timer className="w-5 h-5" />
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-400 uppercase font-bold block leading-none">Time Left</span>
-                  <span className={`text-2xl font-black font-mono leading-none ${timeLeft <= 10 ? 'text-red-400 animate-pulse' : 'text-white'}`}>
+                  <span className="text-[10px] text-slate-600 uppercase font-black block leading-none">Time Left</span>
+                  <span className={`text-2xl font-black font-mono leading-none ${timeLeft <= 10 ? 'text-rose-600 animate-pulse' : 'text-slate-950'}`}>
                     00:{timeLeft < 10 ? `0${timeLeft}` : timeLeft}
                   </span>
                 </div>
@@ -151,16 +149,16 @@ export const LandformBlitz: React.FC<Props> = ({ onComplete, onAwardPoints }) =>
 
               {/* Streak Multiplier */}
               {streak > 1 && (
-                <div className="px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 font-extrabold text-xs flex items-center gap-1.5 animate-bounce">
-                  <Zap className="w-3.5 h-3.5 fill-amber-300" />
-                  <span>{streak}x STREAK MULTIPLIER!</span>
+                <div className="px-3 py-1 rounded-full bg-yellow-300 border-2 border-slate-900 text-slate-950 font-black text-xs flex items-center gap-1.5 shadow-[2px_2px_0px_0px_#0f172a] animate-bounce">
+                  <Zap className="w-3.5 h-3.5 fill-slate-950" />
+                  <span>{streak}x STREAK!</span>
                 </div>
               )}
 
               {/* Score Counter */}
               <div className="text-right">
-                <span className="text-[10px] text-slate-400 uppercase font-bold block leading-none">Blitz LP</span>
-                <span className="text-2xl font-black text-amber-400 font-mono leading-none">
+                <span className="text-[10px] text-slate-600 uppercase font-black block leading-none">Blitz LP</span>
+                <span className="text-2xl font-black text-amber-600 font-mono leading-none">
                   +{score}
                 </span>
               </div>
@@ -168,10 +166,10 @@ export const LandformBlitz: React.FC<Props> = ({ onComplete, onAwardPoints }) =>
 
             {/* Question Card */}
             <div>
-              <span className="text-xs font-bold text-cyan-400 uppercase tracking-wide block mb-2">
+              <span className="text-xs font-black text-blue-900 uppercase tracking-wide block mb-2">
                 Question {questionIdx + 1}
               </span>
-              <h3 className="text-lg sm:text-xl font-black text-white leading-snug">
+              <h3 className="text-lg sm:text-xl font-black text-slate-950 leading-snug">
                 {currentQ.prompt}
               </h3>
             </div>
@@ -182,20 +180,20 @@ export const LandformBlitz: React.FC<Props> = ({ onComplete, onAwardPoints }) =>
                 <button
                   key={idx}
                   onClick={() => handleSelectOption(idx)}
-                  className="p-4 rounded-2xl bg-slate-800/80 hover:bg-cyan-600 hover:text-white border border-white/10 text-left text-sm font-semibold transition active:scale-95 shadow-md flex items-center justify-between"
+                  className="p-4 rounded-2xl bg-amber-50/80 hover:bg-yellow-100 border-2 border-slate-900 text-left text-sm font-black text-slate-900 transition active:translate-x-0.5 active:translate-y-0.5 active:shadow-none shadow-[3px_3px_0px_0px_#0f172a] flex items-center justify-between cursor-pointer"
                 >
                   <span>{opt}</span>
-                  <span className="text-xs text-slate-400 opacity-60">➔</span>
+                  <span className="text-xs text-slate-500">➔</span>
                 </button>
               ))}
             </div>
 
             {/* Feedback Alert */}
             {answeredFeedback && (
-              <div className={`p-3 rounded-xl border text-xs sm:text-sm font-bold flex items-center gap-2 ${
+              <div className={`p-3.5 rounded-2xl border-2 border-slate-900 text-xs sm:text-sm font-black flex items-center gap-2 shadow-[2px_2px_0px_0px_#0f172a] ${
                 answeredFeedback.isCorrect
-                  ? 'bg-emerald-950 border-emerald-500 text-emerald-300'
-                  : 'bg-red-950 border-red-500 text-red-300'
+                  ? 'bg-emerald-100 text-emerald-950'
+                  : 'bg-rose-100 text-rose-950'
               }`}>
                 <span>{answeredFeedback.text}</span>
               </div>
@@ -205,34 +203,34 @@ export const LandformBlitz: React.FC<Props> = ({ onComplete, onAwardPoints }) =>
 
         {/* Finished State */}
         {isFinished && (
-          <div className="p-8 sm:p-12 rounded-3xl bg-slate-900 border border-emerald-500/40 text-center shadow-2xl space-y-6">
-            <div className="w-20 h-20 rounded-3xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 text-4xl flex items-center justify-center mx-auto shadow-lg">
+          <div className="p-8 sm:p-12 rounded-3xl bg-white border-3 border-slate-900 text-center shadow-[6px_6px_0px_0px_#0f172a] space-y-6">
+            <div className="w-20 h-20 rounded-3xl bg-emerald-300 border-2.5 border-slate-900 text-slate-950 text-4xl flex items-center justify-center mx-auto shadow-[3px_3px_0px_0px_#0f172a]">
               ⏱️
             </div>
 
             <div>
-              <span className="text-xs font-bold text-emerald-400 uppercase tracking-widest block mb-1">Time Expired</span>
-              <h2 className="text-3xl sm:text-4xl font-black text-white">BLITZ COMPLETE!</h2>
-              <p className="text-slate-300 text-sm mt-1">
-                Outstanding rapid recall! You answered <strong className="text-emerald-400">{correctCount}</strong> questions correctly.
+              <span className="text-xs font-black text-emerald-700 uppercase tracking-widest block mb-1">Time Expired</span>
+              <h2 className="text-3xl sm:text-4xl font-black text-slate-950">BLITZ COMPLETE!</h2>
+              <p className="text-slate-800 text-sm font-bold mt-1">
+                Outstanding rapid recall! You answered <strong className="text-emerald-700">{correctCount}</strong> questions correctly.
               </p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-800/80 border border-white/10 inline-block">
-              <span className="text-xs text-slate-400 uppercase font-bold block">Points Earned</span>
-              <span className="text-3xl font-black text-amber-400">+{score} LIFE POINTS</span>
+            <div className="p-4 rounded-2xl bg-yellow-100 border-2 border-slate-900 shadow-[3px_3px_0px_0px_#0f172a] inline-block">
+              <span className="text-xs text-slate-700 uppercase font-black block">Points Earned</span>
+              <span className="text-3xl font-black text-slate-950">+{score} LIFE POINTS</span>
             </div>
 
             <div className="flex items-center justify-center gap-4">
               <button
                 onClick={startBlitz}
-                className="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300 transition"
+                className="px-6 py-3 rounded-2xl bg-white hover:bg-slate-50 border-2 border-slate-900 text-xs font-black text-slate-900 shadow-[2px_2px_0px_0px_#0f172a] cursor-pointer"
               >
                 Play Again
               </button>
               <button
                 onClick={() => { soundEngine.playClick(); onComplete(); }}
-                className="px-8 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 text-slate-950 font-black text-sm shadow-lg transition transform hover:scale-105"
+                className="px-8 py-3 rounded-2xl bg-emerald-400 hover:bg-emerald-300 border-2.5 border-slate-900 text-slate-950 font-black text-sm shadow-[4px_4px_0px_0px_#0f172a] cursor-pointer"
               >
                 RETURN TO MAP ➔
               </button>

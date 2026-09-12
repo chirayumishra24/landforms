@@ -121,33 +121,33 @@ export const Mission4Livelihoods: React.FC<Props> = ({
   const isMissionFinished = totalAssigned >= LIVELIHOODS.length;
 
   return (
-    <div className="relative min-h-[calc(100vh-60px)] p-4 sm:p-6 bg-slate-950 text-white select-none">
+    <div className="relative min-h-[calc(100vh-60px)] p-4 sm:p-6 bg-transparent text-slate-900 select-none">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-6 border-b border-white/10 pb-4">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-5 border-b-2 border-slate-900 pb-4">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs font-bold uppercase tracking-wider mb-1 border border-purple-500/30">
-              <Briefcase className="w-3.5 h-3.5" />
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-200 text-purple-950 text-xs font-black uppercase tracking-wider mb-1 border-2 border-slate-900 shadow-[2px_2px_0px_0px_#0f172a]">
+              <Briefcase className="w-3.5 h-3.5 text-purple-900" />
               <span>Mission 4 of 5 • Economic Geography</span>
             </div>
-            <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-white flex items-center gap-2">
+            <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-slate-950 flex items-center gap-2">
               <span>💼 LAND & LIVELIHOODS</span>
             </h2>
-            <p className="text-xs sm:text-sm text-slate-300">
+            <p className="text-xs sm:text-sm text-slate-800 font-bold">
               Discover how physical terrain offers unique economic opportunities while imposing natural constraints.
             </p>
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="bg-slate-900 border border-white/10 px-4 py-2 rounded-2xl flex items-center gap-2">
-              <span className="text-xs text-slate-400 font-medium">Assigned:</span>
-              <span className="text-sm font-extrabold text-emerald-400">{totalAssigned} / {LIVELIHOODS.length}</span>
+            <div className="bg-white border-2.5 border-slate-900 px-4 py-2 rounded-2xl flex items-center gap-2 shadow-[3px_3px_0px_0px_#0f172a]">
+              <span className="text-xs text-slate-700 font-black">Assigned:</span>
+              <span className="text-sm font-black text-emerald-700">{totalAssigned} / {LIVELIHOODS.length}</span>
             </div>
 
             {isMissionFinished && (
               <button
                 onClick={() => { soundEngine.playClick(); onComplete(); }}
-                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-sm shadow-lg flex items-center gap-2 animate-bounce"
+                className="px-6 py-2.5 rounded-2xl bg-emerald-400 hover:bg-emerald-300 border-2.5 border-slate-900 text-slate-950 font-black text-sm shadow-[4px_4px_0px_0px_#0f172a] flex items-center gap-2 animate-bounce cursor-pointer"
               >
                 <span>COMPLETE MISSION ➔</span>
               </button>
@@ -172,33 +172,33 @@ export const Mission4Livelihoods: React.FC<Props> = ({
             return (
               <div
                 key={item.id}
-                className={`p-5 rounded-3xl border transition-all duration-300 shadow-xl flex flex-col justify-between ${
+                className={`p-5 rounded-3xl border-2.5 border-slate-900 transition-all duration-300 shadow-[4px_4px_0px_0px_#0f172a] flex flex-col justify-between ${
                   isDone
-                    ? 'bg-purple-950/40 border-purple-500/50'
-                    : 'bg-slate-900/80 border-white/10 hover:border-slate-600'
+                    ? 'bg-emerald-100'
+                    : 'bg-white hover:-translate-y-1'
                 }`}
               >
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-3xl">{item.icon}</span>
                     {isDone ? (
-                      <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30 flex items-center gap-1">
+                      <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-200 text-emerald-950 font-black border border-emerald-900 flex items-center gap-1">
                         <CheckCircle2 className="w-3.5 h-3.5" /> Allocated
                       </span>
                     ) : (
-                      <span className="text-[10px] text-slate-400 uppercase tracking-wider">Unassigned</span>
+                      <span className="text-[10px] text-slate-600 uppercase tracking-wider font-black">Unassigned</span>
                     )}
                   </div>
 
-                  <h3 className="font-extrabold text-base text-white mb-1.5">{item.title}</h3>
-                  <p className="text-xs text-slate-300 leading-relaxed mb-4">
+                  <h3 className="font-black text-base text-slate-950 mb-1.5">{item.title}</h3>
+                  <p className="text-xs text-slate-800 font-bold leading-relaxed mb-4">
                     {item.description}
                   </p>
                 </div>
 
                 {/* Landform Buttons */}
                 <div>
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                  <div className="text-[10px] font-black uppercase tracking-wider text-slate-600 mb-2">
                     Allocate to Landform:
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
@@ -210,12 +210,12 @@ export const Mission4Livelihoods: React.FC<Props> = ({
                           key={zone.id}
                           onClick={() => handleAssignLivelihood(item, zone.id)}
                           disabled={isDone}
-                          className={`p-1.5 rounded-xl text-[11px] font-bold border transition flex items-center justify-center gap-1 ${
+                          className={`p-1.5 rounded-xl text-[11px] font-black border-2 border-slate-900 transition flex items-center justify-center gap-1 cursor-pointer ${
                             isSelected && isDone
-                              ? 'bg-emerald-600 border-emerald-400 text-white'
+                              ? 'bg-emerald-300 text-emerald-950 shadow-[1px_1px_0px_0px_#0f172a]'
                               : isSelected && !isMatch(item, zone.id)
-                              ? 'bg-red-900/60 border-red-500 text-red-200'
-                              : 'bg-slate-800/80 border-white/5 text-slate-300 hover:bg-slate-700 hover:text-white'
+                              ? 'bg-rose-200 text-rose-950'
+                              : 'bg-amber-50 hover:bg-yellow-200 text-slate-900 shadow-[1px_1px_0px_0px_#0f172a]'
                           }`}
                         >
                           <span>{zone.icon}</span>
@@ -232,8 +232,8 @@ export const Mission4Livelihoods: React.FC<Props> = ({
 
         {/* Live Feedback Banner */}
         {feedback && (
-          <div className="p-4 rounded-2xl bg-slate-900 border border-purple-500/40 text-xs sm:text-sm text-purple-200 flex items-start gap-2.5 shadow-xl">
-            <Sparkles className="w-4 h-4 shrink-0 text-amber-300 mt-0.5" />
+          <div className="p-4 rounded-2xl bg-emerald-100 border-2 border-slate-900 text-xs sm:text-sm text-emerald-950 font-bold flex items-start gap-2.5 shadow-[3px_3px_0px_0px_#0f172a] animate-fade-in">
+            <Sparkles className="w-4 h-4 shrink-0 text-amber-600 mt-0.5" />
             <span>{feedback}</span>
           </div>
         )}

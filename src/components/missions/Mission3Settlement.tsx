@@ -147,36 +147,36 @@ export const Mission3Settlement: React.FC<Props> = ({
   const isMissionComplete = placedBuildings.length >= 3 && isFarmingDone && routeConnected;
 
   return (
-    <div className="relative min-h-[calc(100vh-60px)] p-4 sm:p-6 bg-slate-950 text-white select-none">
+    <div className="relative min-h-[calc(100vh-60px)] p-4 sm:p-6 bg-transparent text-slate-900 select-none">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-6 border-b border-white/10 pb-4">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-5 border-b-2 border-slate-900 pb-4">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-bold uppercase tracking-wider mb-1 border border-amber-500/30">
-              <Hammer className="w-3.5 h-3.5" />
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-200 text-amber-950 text-xs font-black uppercase tracking-wider mb-1 border-2 border-slate-900 shadow-[2px_2px_0px_0px_#0f172a]">
+              <Hammer className="w-3.5 h-3.5 text-amber-900" />
               <span>Mission 3 of 5 • Spatial Strategy</span>
             </div>
-            <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-white flex items-center gap-2">
+            <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-slate-950 flex items-center gap-2">
               <span>🏘️ BUILD A SETTLEMENT & TRANSIT GRID</span>
             </h2>
-            <p className="text-xs sm:text-sm text-slate-300">
+            <p className="text-xs sm:text-sm text-slate-800 font-bold">
               Manage your 100 Building Points budget. Plan settlements, place fertile farms, and connect trade corridors.
             </p>
           </div>
 
           <div className="flex items-center gap-3">
             {/* Building Points Pill */}
-            <div className="bg-slate-900 border border-amber-500/40 px-4 py-2 rounded-2xl flex items-center gap-2.5 shadow-lg">
-              <span className="text-xs text-slate-300 font-medium">BUILDING POINTS:</span>
-              <span className="text-lg font-black text-amber-400 tabular-nums">
-                {buildingPoints} <span className="text-xs font-normal text-amber-200">PTS</span>
+            <div className="bg-yellow-300 border-2.5 border-slate-900 px-4 py-2 rounded-2xl flex items-center gap-2.5 shadow-[3px_3px_0px_0px_#0f172a]">
+              <span className="text-xs text-slate-900 font-black">BUILDING POINTS:</span>
+              <span className="text-lg font-black text-slate-950 tabular-nums">
+                {buildingPoints} <span className="text-xs font-black text-slate-800">PTS</span>
               </span>
             </div>
 
             {isMissionComplete && (
               <button
                 onClick={() => { soundEngine.playClick(); onComplete(); }}
-                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-sm shadow-lg flex items-center gap-2 animate-bounce"
+                className="px-6 py-2.5 rounded-2xl bg-emerald-400 hover:bg-emerald-300 border-2.5 border-slate-900 text-slate-950 font-black text-sm shadow-[4px_4px_0px_0px_#0f172a] flex items-center gap-2 animate-bounce cursor-pointer"
               >
                 <span>COMPLETE MISSION ➔</span>
               </button>
@@ -196,40 +196,40 @@ export const Mission3Settlement: React.FC<Props> = ({
         <div className="flex items-center gap-3 mb-6">
           <button
             onClick={() => { soundEngine.playClick(); setActiveTab('build'); }}
-            className={`px-5 py-2.5 rounded-xl font-bold text-sm transition flex items-center gap-2 border ${
+            className={`px-5 py-2.5 rounded-2xl font-black text-sm transition flex items-center gap-2 border-2.5 border-slate-900 cursor-pointer ${
               activeTab === 'build'
-                ? 'bg-amber-600 border-amber-400 text-white shadow-lg'
-                : 'bg-slate-900 border-white/10 text-slate-300 hover:bg-slate-800'
+                ? 'bg-yellow-300 text-slate-950 shadow-[4px_4px_0px_0px_#0f172a] scale-105'
+                : 'bg-white hover:bg-amber-50 text-slate-800 shadow-[2px_2px_0px_0px_#0f172a]'
             }`}
           >
-            <span>🏘️ 1. Interactive Settlement Grid</span>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-black/30 font-bold">
+            <span>🏘️ 1. Settlement Grid</span>
+            <span className="text-xs px-2 py-0.5 rounded-full bg-slate-900 text-white font-black">
               {placedBuildings.length} Placed
             </span>
           </button>
 
           <button
             onClick={() => { soundEngine.playClick(); setActiveTab('farming'); }}
-            className={`px-5 py-2.5 rounded-xl font-bold text-sm transition flex items-center gap-2 border ${
+            className={`px-5 py-2.5 rounded-2xl font-black text-sm transition flex items-center gap-2 border-2.5 border-slate-900 cursor-pointer ${
               activeTab === 'farming'
-                ? 'bg-amber-600 border-amber-400 text-white shadow-lg'
-                : 'bg-slate-900 border-white/10 text-slate-300 hover:bg-slate-800'
+                ? 'bg-yellow-300 text-slate-950 shadow-[4px_4px_0px_0px_#0f172a] scale-105'
+                : 'bg-white hover:bg-amber-50 text-slate-800 shadow-[2px_2px_0px_0px_#0f172a]'
             }`}
           >
-            <span>🌾 2. Farming Decision & Reasoning</span>
-            {isFarmingDone && <CheckCircle2 className="w-4 h-4 text-emerald-300" />}
+            <span>🌾 2. Farming Decision</span>
+            {isFarmingDone && <CheckCircle2 className="w-4 h-4 text-emerald-700" />}
           </button>
 
           <button
             onClick={() => { soundEngine.playClick(); setActiveTab('roads'); }}
-            className={`px-5 py-2.5 rounded-xl font-bold text-sm transition flex items-center gap-2 border ${
+            className={`px-5 py-2.5 rounded-2xl font-black text-sm transition flex items-center gap-2 border-2.5 border-slate-900 cursor-pointer ${
               activeTab === 'roads'
-                ? 'bg-amber-600 border-amber-400 text-white shadow-lg'
-                : 'bg-slate-900 border-white/10 text-slate-300 hover:bg-slate-800'
+                ? 'bg-yellow-300 text-slate-950 shadow-[4px_4px_0px_0px_#0f172a] scale-105'
+                : 'bg-white hover:bg-amber-50 text-slate-800 shadow-[2px_2px_0px_0px_#0f172a]'
             }`}
           >
-            <span>🛣️ 3. Road & Valley Connector</span>
-            {routeConnected && <CheckCircle2 className="w-4 h-4 text-emerald-300" />}
+            <span>🛣️ 3. Road Connector</span>
+            {routeConnected && <CheckCircle2 className="w-4 h-4 text-emerald-700" />}
           </button>
         </div>
 

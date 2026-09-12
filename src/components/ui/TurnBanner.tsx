@@ -16,21 +16,21 @@ export const TurnBanner: React.FC<Props> = ({
   turnTeam,
   teams,
   onSwitchTurn,
-  actionPrompt = "Step up to the Smart Board to answer or make this spatial decision!"
+  actionPrompt = "Step up to the Smart Board to make your spatial decision!"
 }) => {
   const currentTeam = teams[turnTeam];
   const isTerra = turnTeam === 'terraformers';
 
   return (
-    <div className={`w-full mb-4 p-3 sm:p-4 rounded-2xl border-2 transition-all duration-300 shadow-xl flex flex-wrap items-center justify-between gap-3 ${
+    <div className={`w-full mb-4 p-3.5 sm:p-4 rounded-3xl border-3 border-slate-900 shadow-[5px_5px_0px_0px_#0f172a] transition-all flex flex-wrap items-center justify-between gap-3 select-none ${
       isTerra
-        ? 'bg-gradient-to-r from-blue-950/90 via-blue-900/70 to-slate-900 border-blue-400 ring-2 ring-blue-500/40'
-        : 'bg-gradient-to-r from-orange-950/90 via-orange-900/70 to-slate-900 border-orange-400 ring-2 ring-orange-500/40'
+        ? 'bg-gradient-to-r from-blue-100 via-sky-50 to-white'
+        : 'bg-gradient-to-r from-orange-100 via-amber-50 to-white'
     }`}>
       {/* Team Badge & Instruction */}
       <div className="flex items-center gap-3">
-        <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl shadow-lg ${
-          isTerra ? 'bg-blue-600' : 'bg-orange-600'
+        <div className={`w-11 h-11 rounded-2xl border-2.5 border-slate-900 flex items-center justify-center text-2xl shadow-[2px_2px_0px_0px_#0f172a] ${
+          isTerra ? 'bg-blue-400' : 'bg-orange-400'
         }`}>
           {isTerra ? '🔵' : '🟠'}
         </div>
@@ -38,32 +38,34 @@ export const TurnBanner: React.FC<Props> = ({
         <div>
           <div className="flex items-center gap-2">
             <span className={`text-xs sm:text-sm font-black uppercase tracking-wider ${
-              isTerra ? 'text-blue-300' : 'text-orange-300'
+              isTerra ? 'text-blue-950' : 'text-orange-950'
             }`}>
               {currentTeam.name}&apos;S TURN
             </span>
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/20 text-white font-extrabold animate-pulse">
-              ACTIVE SQUAD
+            <span className={`text-[10px] px-2.5 py-0.5 rounded-full font-black border-2 border-slate-900 shadow-[1px_1px_0px_0px_#0f172a] ${
+              isTerra ? 'bg-blue-300 text-blue-950' : 'bg-orange-300 text-orange-950'
+            }`}>
+              SMART BOARD ACTIVE
             </span>
           </div>
-          <p className="text-xs text-slate-200 font-medium">
+          <p className="text-xs sm:text-sm text-slate-800 font-bold">
             {actionPrompt}
           </p>
         </div>
       </div>
 
-      {/* Manual Turn Switch Button for Teacher/Smart Board */}
+      {/* Manual Turn Switch Button for Smart Board */}
       <div className="flex items-center gap-2">
         <button
           onClick={() => {
             soundEngine.playClick();
             onSwitchTurn();
           }}
-          className="px-3.5 py-1.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 border border-white/20 text-xs font-bold text-slate-200 hover:text-white flex items-center gap-1.5 transition shadow-sm active:scale-95 cursor-pointer"
+          className="px-4 py-2 rounded-2xl bg-yellow-300 hover:bg-yellow-400 border-2.5 border-slate-900 shadow-[3px_3px_0px_0px_#0f172a] text-xs sm:text-sm font-black text-slate-950 flex items-center gap-1.5 transition active:translate-x-0.5 active:translate-y-0.5 active:shadow-none cursor-pointer"
           title="Switch active turn to the other team"
         >
-          <ArrowRightLeft className="w-3.5 h-3.5 text-amber-400" />
-          <span>Pass Turn ➔ {isTerra ? 'Earthkeepers' : 'Terraformers'}</span>
+          <ArrowRightLeft className="w-4 h-4 text-slate-950" />
+          <span>Pass Turn ➔ {isTerra ? 'Earthkeepers 🟠' : 'Terraformers 🔵'}</span>
         </button>
       </div>
     </div>

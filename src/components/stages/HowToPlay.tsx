@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { ArrowRight, CheckCircle2, Award, Zap } from 'lucide-react';
+import { ArrowRight, Zap } from 'lucide-react';
 import { soundEngine } from '@/utils/soundEngine';
 
 interface Props {
@@ -13,32 +13,38 @@ export const HowToPlay: React.FC<Props> = ({ onContinue }) => {
     {
       icon: "🗺️",
       title: "1. Explore the Map",
-      desc: "Investigate Mountains, Plateaus, Plains, Valleys, and Coasts. Inspect elevation, slope, and climate conditions."
+      desc: "Investigate Mountains, Plateaus, Plains, Valleys, and Coasts. Inspect elevation, slope, and climate conditions.",
+      bg: "bg-blue-100 border-blue-900 shadow-[4px_4px_0px_0px_#1e3a8a]"
     },
     {
       icon: "🧠",
-      title: "2. Solve Geography Challenges",
-      desc: "Understand WHY certain human occupations, crops, and animals thrive in specific geographical environments."
+      title: "2. Solve Challenges",
+      desc: "Understand WHY certain human occupations, crops, and animals thrive in specific geographical environments.",
+      bg: "bg-cyan-100 border-cyan-900 shadow-[4px_4px_0px_0px_#155e75]"
     },
     {
       icon: "🏘️",
-      title: "3. Build Settlements & Roads",
-      desc: "Spend 100 Building Points wisely. Avoid steep landslide hazards and connect farms to marketplaces and deepwater ports."
+      title: "3. Build Settlements",
+      desc: "Spend 100 Building Points wisely. Avoid steep landslide hazards and connect farms to marketplaces and ports.",
+      bg: "bg-amber-100 border-amber-900 shadow-[4px_4px_0px_0px_#78350f]"
     },
     {
       icon: "🌾",
-      title: "4. Choose Suitable Livelihoods",
-      desc: "Match agriculture, mining, fisheries, pastoralism, and tourism with the natural resource profile of the land."
+      title: "4. Choose Livelihoods",
+      desc: "Match agriculture, mining, fisheries, pastoralism, and tourism with the natural resource profile of the land.",
+      bg: "bg-emerald-100 border-emerald-900 shadow-[4px_4px_0px_0px_#064e3b]"
     },
     {
       icon: "⚠️",
-      title: "5. Respond to Regional Crises",
-      desc: "Mitigate cyclones, floods, landslides, and droughts using sound ecological and geological planning."
+      title: "5. Respond to Crises",
+      desc: "Mitigate cyclones, floods, landslides, and droughts using sound ecological and geological planning.",
+      bg: "bg-rose-100 border-rose-900 shadow-[4px_4px_0px_0px_#881337]"
     },
     {
       icon: "⭐",
-      title: "6. Earn Life Points & Win",
-      desc: "Accumulate Life Points (LP) for smart decisions. The squad with the highest geographical wisdom wins the trophy!"
+      title: "6. Earn Life Points",
+      desc: "Accumulate Life Points (LP) for smart decisions. The squad with the highest geographical wisdom wins the trophy!",
+      bg: "bg-purple-100 border-purple-900 shadow-[4px_4px_0px_0px_#581c87]"
     }
   ];
 
@@ -48,18 +54,18 @@ export const HowToPlay: React.FC<Props> = ({ onContinue }) => {
   };
 
   return (
-    <div className="relative min-h-[calc(100vh-60px)] flex flex-col items-center justify-center p-4 sm:p-8 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white select-none">
+    <div className="relative min-h-[calc(100vh-60px)] flex flex-col items-center justify-center p-4 sm:p-8 bg-transparent text-slate-900 select-none">
       <div className="max-w-4xl w-full mx-auto">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold uppercase tracking-wider mb-2 border border-emerald-500/30">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-yellow-300 text-slate-950 text-xs font-black uppercase tracking-wider mb-2 border-2 border-slate-900 shadow-[2px_2px_0px_0px_#0f172a]">
             <Zap className="w-3.5 h-3.5" />
             <span>Mission Briefing</span>
           </div>
-          <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-white mb-2">
+          <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-950 mb-2">
             HOW TO PLAY & WIN
           </h2>
-          <p className="text-slate-300 text-sm sm:text-base">
-            Master the core cycle: <strong className="text-emerald-400">EXPLORE → DISCOVER → DECIDE → BUILD → ADAPT → WIN</strong>
+          <p className="text-slate-800 text-sm sm:text-base font-bold">
+            Master the core cycle: <strong className="text-emerald-700">EXPLORE → DISCOVER → DECIDE → BUILD → ADAPT → WIN</strong>
           </p>
         </div>
 
@@ -68,13 +74,13 @@ export const HowToPlay: React.FC<Props> = ({ onContinue }) => {
           {steps.map((step, idx) => (
             <div
               key={idx}
-              className="p-5 rounded-2xl bg-slate-800/70 border border-white/10 backdrop-blur-md hover:border-emerald-400/50 transition-all duration-300 hover:-translate-y-1 shadow-lg flex flex-col"
+              className={`p-5 rounded-3xl ${step.bg} border-2.5 border-slate-900 transition-all duration-300 hover:-translate-y-1 flex flex-col`}
             >
               <div className="text-4xl mb-3">{step.icon}</div>
-              <h3 className="font-extrabold text-base text-white mb-1.5 flex items-center gap-2">
+              <h3 className="font-black text-base text-slate-950 mb-1.5 flex items-center gap-2">
                 <span>{step.title}</span>
               </h3>
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-slate-800 font-bold leading-relaxed">
                 {step.desc}
               </p>
             </div>
@@ -82,17 +88,17 @@ export const HowToPlay: React.FC<Props> = ({ onContinue }) => {
         </div>
 
         {/* Scoring summary pill */}
-        <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 via-emerald-500/10 to-blue-500/10 border border-white/10 mb-8 flex items-center justify-between flex-wrap gap-4">
+        <div className="p-4 rounded-3xl bg-white border-2.5 border-slate-900 shadow-[4px_4px_0px_0px_#0f172a] mb-8 flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center text-xl">
+            <div className="w-10 h-10 rounded-2xl bg-yellow-300 border-2 border-slate-900 flex items-center justify-center text-xl shadow-[1px_1px_0px_0px_#0f172a]">
               ⭐
             </div>
             <div>
-              <div className="text-xs text-amber-300 font-bold uppercase">Reward System</div>
-              <div className="text-sm font-semibold text-slate-200">Life Points awarded for correct choices, smart reasoning & environmental care!</div>
+              <div className="text-xs text-amber-700 font-black uppercase">Reward System</div>
+              <div className="text-sm font-bold text-slate-900">Life Points awarded for correct choices, smart reasoning & environmental care!</div>
             </div>
           </div>
-          <div className="text-xs text-slate-400 font-mono">
+          <div className="text-xs text-slate-700 font-black bg-slate-100 px-3 py-1 rounded-xl border border-slate-300">
             Missions 1-5 • Blitz • Final Restoration
           </div>
         </div>
@@ -101,10 +107,9 @@ export const HowToPlay: React.FC<Props> = ({ onContinue }) => {
         <div className="text-center">
           <button
             onClick={handleStart}
-            className="px-12 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-black text-lg sm:text-xl shadow-[0_0_30px_rgba(16,185,129,0.4)] hover:shadow-[0_0_50px_rgba(16,185,129,0.7)] transition-all transform hover:scale-105 active:scale-95 flex items-center gap-3 mx-auto"
+            className="px-10 sm:px-14 py-4 rounded-2xl bg-emerald-400 hover:bg-emerald-300 border-3 border-slate-900 text-slate-950 font-black text-lg sm:text-xl shadow-[6px_6px_0px_0px_#0f172a] transition-all transform hover:-translate-y-1 active:translate-x-1 active:translate-y-1 active:shadow-none cursor-pointer"
           >
-            <span>LET&apos;S GO!</span>
-            <ArrowRight className="w-5 h-5" />
+            ENTER THE REGIONAL MAP ➔
           </button>
         </div>
       </div>

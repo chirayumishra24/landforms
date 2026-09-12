@@ -1,11 +1,10 @@
 "use client";
 
 import React, { useState } from 'react';
-import { LandformType } from '@/types/game';
+import { LandformType, TeamId, TeamState } from '@/types/game';
 import { ADAPTATION_CHARACTERS, ADAPTATION_ANIMALS } from '@/data/adaptationsData';
 import { TurnBanner } from '@/components/ui/TurnBanner';
-import { TeamId, TeamState } from '@/types/game';
-import { CheckCircle2, HelpCircle, Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
+import { CheckCircle2, Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
 import { soundEngine } from '@/utils/soundEngine';
 
 interface Props {
@@ -62,7 +61,7 @@ export const Mission2LifeAdapts: React.FC<Props> = ({
       setHumanFeedback(`✓ EXCELLENT! ${character.title} thrives in ${landform.toUpperCase()}: ${character.explanation}`);
     } else {
       soundEngine.playWrong();
-      setHumanFeedback(`⚠️ Suboptimal match. Consider what natural resources and topography ${character.title} requires to work!`);
+      setHumanFeedback(`⚠️ Suboptimal match. Consider what natural resources and topography ${character.title} requires!`);
     }
   };
 
@@ -83,7 +82,7 @@ export const Mission2LifeAdapts: React.FC<Props> = ({
       setAnimalFeedback(`✓ BRILLIANT REASONING (+120 LP): ${currentAnimal.explanation}`);
     } else {
       soundEngine.playWrong();
-      setAnimalFeedback("⚠️ Not quite. Think about how physical anatomical adaptations (feet, lungs, humps, gills) counter specific environmental challenges.");
+      setAnimalFeedback("⚠️ Not quite. Think about how anatomical adaptations counter specific environmental challenges.");
     }
   };
 
@@ -92,27 +91,27 @@ export const Mission2LifeAdapts: React.FC<Props> = ({
   const isAllComplete = totalHumansCorrect >= 6 && totalAnimalsCorrect >= 4;
 
   return (
-    <div className="relative min-h-[calc(100vh-60px)] p-4 sm:p-6 bg-slate-950 text-white select-none">
+    <div className="relative min-h-[calc(100vh-60px)] p-4 sm:p-6 bg-transparent text-slate-900 select-none">
       <div className="max-w-6xl mx-auto">
         {/* Mission Header */}
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-6 border-b border-white/10 pb-4">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-5 border-b-2 border-slate-900 pb-4">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold uppercase tracking-wider mb-1 border border-emerald-500/30">
-              <ShieldCheck className="w-3.5 h-3.5" />
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-950 text-xs font-black uppercase tracking-wider mb-1 border-2 border-slate-900 shadow-[2px_2px_0px_0px_#0f172a]">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
               <span>Mission 2 of 5</span>
             </div>
-            <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-white flex items-center gap-2">
+            <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-slate-950 flex items-center gap-2">
               <span>🌱 LIFE ADAPTS: HUMANS & WILDLIFE</span>
             </h2>
-            <p className="text-xs sm:text-sm text-slate-300">
+            <p className="text-xs sm:text-sm text-slate-800 font-bold">
               Discover how physical landforms dictate human livelihoods and evolutionary traits of animals.
             </p>
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="bg-slate-900 border border-white/10 px-4 py-2 rounded-2xl flex items-center gap-3">
-              <span className="text-xs text-slate-400">Progress:</span>
-              <span className="text-sm font-extrabold text-emerald-400">
+            <div className="bg-white border-2.5 border-slate-900 px-4 py-2 rounded-2xl flex items-center gap-3 shadow-[3px_3px_0px_0px_#0f172a]">
+              <span className="text-xs text-slate-700 font-black">Progress:</span>
+              <span className="text-sm font-black text-emerald-700">
                 {totalHumansCorrect}/6 Humans • {totalAnimalsCorrect}/4 Animals
               </span>
             </div>
@@ -120,7 +119,7 @@ export const Mission2LifeAdapts: React.FC<Props> = ({
             {isAllComplete && (
               <button
                 onClick={() => { soundEngine.playClick(); onComplete(); }}
-                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-sm shadow-lg flex items-center gap-2 animate-bounce"
+                className="px-6 py-2.5 rounded-2xl bg-emerald-400 hover:bg-emerald-300 border-2.5 border-slate-900 text-slate-950 font-black text-sm shadow-[4px_4px_0px_0px_#0f172a] flex items-center gap-2 animate-bounce cursor-pointer"
               >
                 <span>COMPLETE MISSION ➔</span>
               </button>
@@ -140,28 +139,28 @@ export const Mission2LifeAdapts: React.FC<Props> = ({
         <div className="flex items-center gap-3 mb-6">
           <button
             onClick={() => { soundEngine.playClick(); setActiveTab('humans'); }}
-            className={`px-5 py-2.5 rounded-xl font-bold text-sm transition flex items-center gap-2 border ${
+            className={`px-5 py-2.5 rounded-2xl font-black text-sm transition flex items-center gap-2 border-2.5 border-slate-900 cursor-pointer ${
               activeTab === 'humans'
-                ? 'bg-emerald-600 border-emerald-400 text-white shadow-lg shadow-emerald-600/30'
-                : 'bg-slate-900 border-white/10 text-slate-300 hover:bg-slate-800'
+                ? 'bg-yellow-300 text-slate-950 shadow-[4px_4px_0px_0px_#0f172a] scale-105'
+                : 'bg-white hover:bg-amber-50 text-slate-800 shadow-[2px_2px_0px_0px_#0f172a]'
             }`}
           >
             <span>👨‍🌾 Human Livelihoods</span>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-black/30 font-bold">
+            <span className="text-xs px-2 py-0.5 rounded-full bg-slate-900 text-white font-black">
               {totalHumansCorrect}/6
             </span>
           </button>
 
           <button
             onClick={() => { soundEngine.playClick(); setActiveTab('animals'); }}
-            className={`px-5 py-2.5 rounded-xl font-bold text-sm transition flex items-center gap-2 border ${
+            className={`px-5 py-2.5 rounded-2xl font-black text-sm transition flex items-center gap-2 border-2.5 border-slate-900 cursor-pointer ${
               activeTab === 'animals'
-                ? 'bg-emerald-600 border-emerald-400 text-white shadow-lg shadow-emerald-600/30'
-                : 'bg-slate-900 border-white/10 text-slate-300 hover:bg-slate-800'
+                ? 'bg-yellow-300 text-slate-950 shadow-[4px_4px_0px_0px_#0f172a] scale-105'
+                : 'bg-white hover:bg-amber-50 text-slate-800 shadow-[2px_2px_0px_0px_#0f172a]'
             }`}
           >
             <span>🐐 Animal Adaptations & Reasoning</span>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-black/30 font-bold">
+            <span className="text-xs px-2 py-0.5 rounded-full bg-slate-900 text-white font-black">
               {totalAnimalsCorrect}/4
             </span>
           </button>
@@ -170,9 +169,11 @@ export const Mission2LifeAdapts: React.FC<Props> = ({
         {/* ================= PHASE A: HUMAN LIVELIHOODS ================= */}
         {activeTab === 'humans' && (
           <div className="space-y-6">
-            <div className="p-4 rounded-2xl bg-slate-900/80 border border-white/10 text-xs sm:text-sm text-slate-300 flex items-center justify-between">
+            <div className="p-4 rounded-2xl bg-white border-2 border-slate-900 text-xs sm:text-sm text-slate-900 font-bold flex items-center justify-between shadow-[3px_3px_0px_0px_#0f172a]">
               <span>Match each community worker to the most suitable landform environment.</span>
-              <span className="font-bold text-amber-400">⭐ +100 Life Points per correct match</span>
+              <span className="font-black text-amber-700 bg-amber-100 px-3 py-1 rounded-full border border-slate-900">
+                ⭐ +100 Life Points per correct match
+              </span>
             </div>
 
             {/* Grid of Character Cards */}
@@ -184,33 +185,33 @@ export const Mission2LifeAdapts: React.FC<Props> = ({
                 return (
                   <div
                     key={char.id}
-                    className={`p-5 rounded-2xl border transition-all duration-300 shadow-xl flex flex-col justify-between ${
+                    className={`p-5 rounded-3xl border-2.5 border-slate-900 transition-all duration-300 shadow-[4px_4px_0px_0px_#0f172a] flex flex-col justify-between ${
                       isMatched
-                        ? 'bg-emerald-950/40 border-emerald-500/50'
-                        : 'bg-slate-900/80 border-white/10 hover:border-slate-600'
+                        ? 'bg-emerald-100'
+                        : 'bg-white hover:-translate-y-1'
                     }`}
                   >
                     <div>
                       <div className="flex items-center justify-between mb-2">
                         <div className="text-3xl">{char.icon}</div>
                         {isMatched ? (
-                          <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/40 flex items-center gap-1">
+                          <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-200 text-emerald-950 font-black border border-emerald-900 flex items-center gap-1">
                             <CheckCircle2 className="w-3.5 h-3.5" /> Matched
                           </span>
                         ) : (
-                          <span className="text-xs text-slate-400">Select Landform</span>
+                          <span className="text-xs text-slate-600 font-black">Select Landform</span>
                         )}
                       </div>
 
-                      <h3 className="font-black text-base text-white mb-1">{char.title}</h3>
-                      <p className="text-xs text-slate-300 leading-relaxed mb-4">
+                      <h3 className="font-black text-base text-slate-950 mb-1">{char.title}</h3>
+                      <p className="text-xs text-slate-800 font-bold leading-relaxed mb-4">
                         {char.description}
                       </p>
                     </div>
 
                     {/* Landform Target Selection Buttons */}
                     <div>
-                      <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                      <div className="text-[10px] font-black uppercase tracking-wider text-slate-600 mb-2">
                         Assign to Landform:
                       </div>
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
@@ -221,12 +222,12 @@ export const Mission2LifeAdapts: React.FC<Props> = ({
                               key={lf.id}
                               onClick={() => handleMatchHuman(char.id, lf.id)}
                               disabled={isMatched}
-                              className={`p-1.5 rounded-xl text-[11px] font-bold border transition flex items-center justify-center gap-1 ${
+                              className={`p-1.5 rounded-xl text-[11px] font-black border-2 border-slate-900 transition flex items-center justify-center gap-1 cursor-pointer ${
                                 isSelected && isMatched
-                                  ? 'bg-emerald-600 border-emerald-400 text-white'
+                                  ? 'bg-emerald-300 text-emerald-950 shadow-[1px_1px_0px_0px_#0f172a]'
                                   : isSelected && !isMatched
-                                  ? 'bg-red-900/60 border-red-500 text-red-200'
-                                  : 'bg-slate-800/80 border-white/5 text-slate-300 hover:bg-slate-700 hover:text-white'
+                                  ? 'bg-rose-200 text-rose-950'
+                                  : 'bg-amber-50 hover:bg-yellow-200 text-slate-900 shadow-[1px_1px_0px_0px_#0f172a]'
                               }`}
                             >
                               <span>{lf.icon}</span>
@@ -243,8 +244,8 @@ export const Mission2LifeAdapts: React.FC<Props> = ({
 
             {/* Live Feedback Banner */}
             {humanFeedback && (
-              <div className="p-4 rounded-2xl bg-slate-900 border border-emerald-500/40 text-xs sm:text-sm text-emerald-200 flex items-start gap-2.5 shadow-xl">
-                <Sparkles className="w-4 h-4 shrink-0 text-amber-400 mt-0.5" />
+              <div className="p-4 rounded-2xl bg-emerald-100 border-2 border-slate-900 text-xs sm:text-sm text-emerald-950 font-bold flex items-start gap-2.5 shadow-[3px_3px_0px_0px_#0f172a] animate-fade-in">
+                <Sparkles className="w-4 h-4 shrink-0 text-amber-600 mt-0.5" />
                 <span>{humanFeedback}</span>
               </div>
             )}
@@ -264,68 +265,64 @@ export const Mission2LifeAdapts: React.FC<Props> = ({
                   <button
                     key={a.id}
                     onClick={() => { soundEngine.playClick(); setCurrentAnimalIdx(idx); setAnimalFeedback(null); }}
-                    className={`p-3 rounded-2xl border text-center transition flex flex-col items-center ${
+                    className={`p-3 rounded-2xl border-2.5 border-slate-900 text-center transition flex flex-col items-center cursor-pointer ${
                       isCurrent
-                        ? 'bg-blue-600 border-blue-400 text-white shadow-lg'
-                        : 'bg-slate-900 border-white/10 text-slate-300 hover:bg-slate-800'
+                        ? 'bg-yellow-300 text-slate-950 shadow-[4px_4px_0px_0px_#0f172a] scale-105'
+                        : 'bg-white hover:bg-slate-50 text-slate-800 shadow-[2px_2px_0px_0px_#0f172a]'
                     }`}
                   >
                     <span className="text-3xl mb-1">{a.icon}</span>
-                    <span className="text-xs font-bold truncate max-w-full">{a.name}</span>
-                    {isDone && <CheckCircle2 className="w-4 h-4 text-emerald-300 mt-1" />}
+                    <span className="text-xs font-black truncate max-w-full">{a.name}</span>
+                    {isDone && <CheckCircle2 className="w-4 h-4 text-emerald-700 mt-1" />}
                   </button>
                 );
               })}
             </div>
 
             {/* Current Animal Challenge Card */}
-            <div className="p-6 sm:p-8 rounded-3xl bg-slate-900/90 border border-white/10 shadow-2xl space-y-5">
-              <div className="flex items-center justify-between border-b border-white/10 pb-4">
+            <div className="p-6 sm:p-8 rounded-3xl bg-white border-3 border-slate-900 shadow-[6px_6px_0px_0px_#0f172a] space-y-5">
+              <div className="flex items-center justify-between border-b-2 border-slate-900 pb-4">
                 <div className="flex items-center gap-3">
                   <span className="text-5xl">{currentAnimal.icon}</span>
                   <div>
-                    <h3 className="text-xl sm:text-2xl font-black text-white">{currentAnimal.name}</h3>
-                    <span className="text-xs text-emerald-400 font-bold">
+                    <h3 className="text-xl sm:text-2xl font-black text-slate-950">{currentAnimal.name}</h3>
+                    <span className="text-xs text-emerald-700 font-black">
                       Native Habitat: {currentAnimal.suitableLandform.toUpperCase()}
                     </span>
                   </div>
                 </div>
                 <div className="text-right">
-                  <span className="text-xs text-amber-400 font-extrabold block">⭐ +120 LP</span>
-                  <span className="text-[10px] text-slate-400">Reasoning Challenge</span>
+                  <span className="text-xs text-slate-950 font-black bg-yellow-300 px-2.5 py-0.5 rounded-full border border-slate-900 block mb-1">⭐ +120 LP</span>
+                  <span className="text-[10px] text-slate-600 font-bold">Reasoning Challenge</span>
                 </div>
               </div>
 
               {/* Adaptation Trait Highlight */}
-              <div className="p-4 rounded-2xl bg-slate-800/70 border border-white/5 text-xs sm:text-sm text-slate-200">
-                <strong className="text-amber-300 block mb-1">Key Evolutionary Trait:</strong>
+              <div className="p-4 rounded-2xl bg-amber-50 border-2 border-slate-900 text-xs sm:text-sm text-slate-900 font-bold">
+                <span className="font-black text-blue-900 block mb-1">Key Evolutionary Feature:</span>
                 {currentAnimal.adaptationTrait}
               </div>
 
-              {/* Signature "WHY?" Question */}
+              {/* Question Prompt */}
               <div>
-                <div className="flex items-center gap-2 text-xs font-bold text-blue-400 uppercase tracking-wide mb-2">
-                  <HelpCircle className="w-4 h-4" />
-                  <span>THE &quot;WHY?&quot; REASONING CHALLENGE</span>
-                </div>
-                <h4 className="text-base sm:text-lg font-bold text-white mb-4">
+                <h4 className="font-black text-sm sm:text-base text-slate-950 mb-3">
                   {currentAnimal.reasoningQuestion}
                 </h4>
 
-                <div className="space-y-3">
-                  {currentAnimal.reasoningOptions.map((opt, idx) => {
+                <div className="space-y-2.5">
+                  {currentAnimal.reasoningOptions.map((opt: string, idx: number) => {
                     const isSelected = animalAnswers[currentAnimal.id] === idx;
                     const isCorrect = idx === currentAnimal.correctReasonIdx;
                     const hasAnswered = animalAnswers[currentAnimal.id] !== undefined;
 
-                    let btnClass = "bg-slate-800/80 border-slate-700 text-slate-200 hover:border-blue-400";
+                    let optClass = "bg-amber-50/70 border-slate-900 text-slate-900 hover:bg-yellow-100 shadow-[3px_3px_0px_0px_#0f172a]";
                     if (hasAnswered) {
                       if (isCorrect) {
-                        btnClass = "bg-emerald-900/60 border-emerald-400 text-white font-bold ring-2 ring-emerald-500/50";
+                        optClass = "bg-emerald-200 border-emerald-950 text-emerald-950 font-black shadow-[4px_4px_0px_0px_#064e3b] ring-2 ring-emerald-400";
                       } else if (isSelected) {
-                        btnClass = "bg-red-900/40 border-red-500 text-red-200";
+                        optClass = "bg-rose-100 border-rose-950 text-rose-950 font-bold";
                       } else {
-                        btnClass = "bg-slate-800/40 border-slate-800 text-slate-500 opacity-60";
+                        optClass = "bg-slate-100 border-slate-300 text-slate-400 opacity-60";
                       }
                     }
 
@@ -334,54 +331,47 @@ export const Mission2LifeAdapts: React.FC<Props> = ({
                         key={idx}
                         onClick={() => handleSelectAnimalReason(idx)}
                         disabled={animalCorrect[currentAnimal.id]}
-                        className={`w-full p-4 rounded-xl border text-left text-xs sm:text-sm transition flex items-center justify-between ${btnClass}`}
+                        className={`w-full p-3.5 rounded-2xl border-2 text-left text-xs sm:text-sm font-bold transition flex items-center justify-between cursor-pointer ${optClass}`}
                       >
                         <span>{opt}</span>
-                        {hasAnswered && isCorrect && (
-                          <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 ml-2" />
-                        )}
+                        {hasAnswered && isCorrect && <CheckCircle2 className="w-5 h-5 text-emerald-700 shrink-0 ml-2" />}
                       </button>
                     );
                   })}
                 </div>
               </div>
 
-              {/* Feedback */}
+              {/* Feedback Banner */}
               {animalFeedback && (
-                <div className="p-4 rounded-2xl bg-emerald-950/80 border border-emerald-500/50 text-xs sm:text-sm text-emerald-200 flex items-start gap-2.5">
-                  <Sparkles className="w-4 h-4 shrink-0 text-amber-300 mt-0.5" />
+                <div className="p-4 rounded-2xl bg-emerald-100 border-2 border-slate-900 text-xs sm:text-sm text-emerald-950 font-bold flex items-start gap-2 shadow-[3px_3px_0px_0px_#0f172a] animate-fade-in">
+                  <Sparkles className="w-4 h-4 shrink-0 text-amber-600 mt-0.5" />
                   <span>{animalFeedback}</span>
                 </div>
               )}
 
-              {/* Navigation */}
-              <div className="flex items-center justify-between pt-4 border-t border-white/10">
+              {/* Next Animal Navigation */}
+              <div className="flex items-center justify-between border-t-2 border-slate-900 pt-4">
                 <button
-                  onClick={() => {
-                    soundEngine.playClick();
-                    setCurrentAnimalIdx(prev => Math.max(prev - 1, 0));
-                    setAnimalFeedback(null);
-                  }}
-                  disabled={currentAnimalIdx === 0}
-                  className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-xs font-bold"
+                  onClick={onSwitchTurn}
+                  className="px-3.5 py-1.5 rounded-xl bg-yellow-300 hover:bg-yellow-400 border-2 border-slate-900 text-xs font-black text-slate-950 shadow-[2px_2px_0px_0px_#0f172a] cursor-pointer"
                 >
-                  Previous Animal
+                  🔄 Pass Turn
                 </button>
 
-                <div className="text-xs text-slate-400 font-mono">
-                  {currentAnimalIdx + 1} / {ADAPTATION_ANIMALS.length}
-                </div>
-
                 <button
                   onClick={() => {
                     soundEngine.playClick();
-                    setCurrentAnimalIdx(prev => Math.min(prev + 1, ADAPTATION_ANIMALS.length - 1));
                     setAnimalFeedback(null);
+                    if (currentAnimalIdx < ADAPTATION_ANIMALS.length - 1) {
+                      setCurrentAnimalIdx(prev => prev + 1);
+                    } else {
+                      setCurrentAnimalIdx(0);
+                    }
                   }}
-                  disabled={currentAnimalIdx === ADAPTATION_ANIMALS.length - 1}
-                  className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-xs font-bold text-white"
+                  className="px-4 py-2 rounded-xl bg-blue-500 hover:bg-blue-400 border-2 border-slate-900 text-xs font-black text-white flex items-center gap-1 shadow-[3px_3px_0px_0px_#0f172a] cursor-pointer"
                 >
-                  Next Animal
+                  <span>Next Animal</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
             </div>
