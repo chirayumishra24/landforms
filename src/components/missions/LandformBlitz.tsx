@@ -5,12 +5,23 @@ import { BLITZ_QUESTIONS } from '@/data/blitzQuestions';
 import { Timer, Zap, Trophy, CheckCircle2, Sparkles } from 'lucide-react';
 import { soundEngine } from '@/utils/soundEngine';
 
+import { TeamId, TeamState } from '@/types/game';
+
 interface Props {
+  turnTeam?: TeamId;
+  teams?: Record<TeamId, TeamState>;
+  onSwitchTurn?: () => void;
   onComplete: () => void;
   onAwardPoints: (amount: number, category: 'knowledge') => void;
 }
 
-export const LandformBlitz: React.FC<Props> = ({ onComplete, onAwardPoints }) => {
+export const LandformBlitz: React.FC<Props> = ({
+  turnTeam,
+  teams,
+  onSwitchTurn,
+  onComplete,
+  onAwardPoints
+}) => {
   const [timeLeft, setTimeLeft] = useState(45);
   const [isStarted, setIsStarted] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
@@ -18,7 +29,9 @@ export const LandformBlitz: React.FC<Props> = ({ onComplete, onAwardPoints }) =>
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
-  const [answeredFeedback, setAnsweredFeedback] = useState<{ isCorrect: boolean; text: string } | null>(null);
+  const [eliminatedOptions, setEliminatedOptions] = useState<number[]>([]);
+  const [wrongAttempts, setWrongAttempts] = useState(0);
+  const [answeredFeedback, setAnsweredFeedback] = useState<{ isCorrect: boolean; isPassed?: boolean; text: string } | null>(null);
 
   // Shuffle questions randomly when entering blitz
   const [questions, setQuestions] = useState(() => {
@@ -34,6 +47,8 @@ export const LandformBlitz: React.FC<Props> = ({ onComplete, onAwardPoints }) =>
     setStreak(0);
     setCorrectCount(0);
     setQuestionIdx(0);
+    setEliminatedOptions([]);
+    setWrongAttempts(0);
     setAnsweredFeedback(null);
   };
 
@@ -59,9 +74,14 @@ export const LandformBlitz: React.FC<Props> = ({ onComplete, onAwardPoints }) =>
 
   const handleSelectOption = (idx: number) => {
     if (isFinished) return;
+    if (eliminatedOptions.includes(idx)) return;
+
     soundEngine.playClick();
 
     const isCorrect = idx === currentQ.correctIdx;
+    const currentTeamName = turnTeam && teams ? teams[turnTeam].name : "Team";
+    const otherTeamId = turnTeam === 'terraformers' ? 'earthkeepers' : 'terraformers';
+    const otherTeamName = teams ? teams[otherTeamId].name : "Other Team";
 
     if (isCorrect) {
       soundEngine.playCorrect();
@@ -70,23 +90,52 @@ export const LandformBlitz: React.FC<Props> = ({ onComplete, onAwardPoints }) =>
       setScore(prev => prev + points);
       setCorrectCount(prev => prev + 1);
       setStreak(prev => prev + 1);
+      const isSteal = wrongAttempts > 0;
       setAnsweredFeedback({
         isCorrect: true,
-        text: `+${points} LP! ${currentQ.explanation}`
+        isPassed: false,
+        text: isSteal
+          ? `🎯 STEAL (+${points} LP for ${currentTeamName})! ${currentQ.explanation}`
+          : `+${points} LP! ${currentQ.explanation}`
       });
+
+      setTimeout(() => {
+        setAnsweredFeedback(null);
+        setEliminatedOptions([]);
+        setWrongAttempts(0);
+        setQuestionIdx(prev => prev + 1);
+      }, 700);
     } else {
       soundEngine.playWrong();
       setStreak(0);
-      setAnsweredFeedback({
-        isCorrect: false,
-        text: `Incorrect. ${currentQ.explanation}`
-      });
-    }
+      const nextAttempts = wrongAttempts + 1;
+      setWrongAttempts(nextAttempts);
+      setEliminatedOptions(prev => [...prev, idx]);
 
-    setTimeout(() => {
-      setAnsweredFeedback(null);
-      setQuestionIdx(prev => prev + 1);
-    }, 550);
+      if (nextAttempts === 1) {
+        // First wrong guess: DO NOT reveal answer! Pass turn!
+        setAnsweredFeedback({
+          isCorrect: false,
+          isPassed: true,
+          text: `❌ Incorrect by ${currentTeamName}! Chance passes to ${otherTeamName} to steal!`
+        });
+        if (onSwitchTurn) onSwitchTurn();
+      } else {
+        // Second wrong guess: Both missed! NOW reveal the answer!
+        setAnsweredFeedback({
+          isCorrect: false,
+          isPassed: false,
+          text: `❌ Both missed! Correct was: "${currentQ.options[currentQ.correctIdx]}". ${currentQ.explanation}`
+        });
+
+        setTimeout(() => {
+          setAnsweredFeedback(null);
+          setEliminatedOptions([]);
+          setWrongAttempts(0);
+          setQuestionIdx(prev => prev + 1);
+        }, 1200);
+      }
+    }
   };
 
   return (
@@ -176,25 +225,40 @@ export const LandformBlitz: React.FC<Props> = ({ onComplete, onAwardPoints }) =>
 
             {/* Options */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {currentQ.options.map((opt, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => handleSelectOption(idx)}
-                  className="p-4 rounded-2xl bg-amber-50/80 hover:bg-yellow-100 border-2 border-slate-900 text-left text-sm font-black text-slate-900 transition active:translate-x-0.5 active:translate-y-0.5 active:shadow-none shadow-[3px_3px_0px_0px_#0f172a] flex items-center justify-between cursor-pointer"
-                >
-                  <span>{opt}</span>
-                  <span className="text-xs text-slate-500">➔</span>
-                </button>
-              ))}
+              {currentQ.options.map((opt, idx) => {
+                const isEliminated = eliminatedOptions.includes(idx);
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => handleSelectOption(idx)}
+                    disabled={isEliminated}
+                    className={`p-4 rounded-2xl border-2 border-slate-900 text-left text-sm font-black transition flex items-center justify-between ${
+                      isEliminated
+                        ? 'bg-rose-100 text-rose-900 line-through opacity-60 cursor-not-allowed shadow-none'
+                        : 'bg-amber-50/80 hover:bg-yellow-100 text-slate-900 shadow-[3px_3px_0px_0px_#0f172a] active:translate-x-0.5 active:translate-y-0.5 cursor-pointer'
+                    }`}
+                  >
+                    <span>{opt}</span>
+                    {isEliminated ? (
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-rose-200 text-rose-900 font-black">❌</span>
+                    ) : (
+                      <span className="text-xs text-slate-500">➔</span>
+                    )}
+                  </button>
+                );
+              })}
             </div>
 
             {/* Feedback Alert */}
             {answeredFeedback && (
-              <div className={`p-3.5 rounded-2xl border-2 border-slate-900 text-xs sm:text-sm font-black flex items-center gap-2 shadow-[2px_2px_0px_0px_#0f172a] ${
-                answeredFeedback.isCorrect
+              <div className={`p-3.5 rounded-2xl border-2.5 border-slate-900 text-xs sm:text-sm font-black flex items-center gap-2 shadow-[2px_2px_0px_0px_#0f172a] ${
+                answeredFeedback.isPassed
+                  ? 'bg-yellow-300 text-slate-950 ring-2 ring-yellow-400 animate-bounce'
+                  : answeredFeedback.isCorrect
                   ? 'bg-emerald-100 text-emerald-950'
                   : 'bg-rose-100 text-rose-950'
               }`}>
+                <Sparkles className="w-4 h-4 shrink-0 mt-0.5 text-amber-600" />
                 <span>{answeredFeedback.text}</span>
               </div>
             )}

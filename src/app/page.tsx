@@ -157,6 +157,9 @@ export default function GamePage() {
 
         {currentStage === 'blitz' && (
           <LandformBlitz
+            turnTeam={turnTeam}
+            teams={teams}
+            onSwitchTurn={switchTurn}
             onComplete={() => setCurrentStage('map')}
             onAwardPoints={(amt, cat) => awardPoints(amt, cat)}
           />

@@ -25,31 +25,63 @@ export const Mission5Crisis: React.FC<Props> = ({
   const [currentIdx, setCurrentIdx] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, number>>({});
   const [scenarioResults, setScenarioResults] = useState<Record<string, boolean>>({});
-  const [feedback, setFeedback] = useState<{ isCorrect: boolean; text: string } | null>(null);
+  const [eliminatedOptions, setEliminatedOptions] = useState<Record<string, number[]>>({});
+  const [wrongAttempts, setWrongAttempts] = useState<Record<string, number>>({});
+  const [scenarioResolved, setScenarioResolved] = useState<Record<string, boolean>>({});
+  const [feedback, setFeedback] = useState<{ isCorrect: boolean; isPassed?: boolean; text: string } | null>(null);
 
   const scenario = CRISIS_SCENARIOS[currentIdx];
 
   const handleSelectOption = (optIdx: number) => {
+    if (scenarioResolved[scenario.id]) return;
+    if (eliminatedOptions[scenario.id]?.includes(optIdx)) return;
+
     soundEngine.playClick();
     setSelectedAnswers(prev => ({ ...prev, [scenario.id]: optIdx }));
 
     const option = scenario.options[optIdx];
+    const otherTeam = turnTeam === 'terraformers' ? 'earthkeepers' : 'terraformers';
+
     if (option.isCorrect) {
-      if (!scenarioResults[scenario.id]) {
-        soundEngine.playCorrect();
-        onAwardPoints(200, 'planning');
-        setScenarioResults(prev => ({ ...prev, [scenario.id]: true }));
-      }
+      soundEngine.playCorrect();
+      const isSteal = (wrongAttempts[scenario.id] || 0) > 0;
+      onAwardPoints(200, 'planning');
+      setScenarioResults(prev => ({ ...prev, [scenario.id]: true }));
+      setScenarioResolved(prev => ({ ...prev, [scenario.id]: true }));
       setFeedback({
         isCorrect: true,
-        text: `✓ MITIGATION SUCCESSFUL (+200 LP): ${option.feedback}`
+        isPassed: false,
+        text: isSteal
+          ? `🎯 DISASTER AVERTED! ${teams[turnTeam].name} steals +200 LP: ${option.feedback}`
+          : `✓ MITIGATION SUCCESSFUL (+200 LP for ${teams[turnTeam].name}): ${option.feedback}`
       });
     } else {
       soundEngine.playWrong();
-      setFeedback({
-        isCorrect: false,
-        text: `⚠️ CRITICAL FLAW: ${option.feedback}`
-      });
+      const nextAttempts = (wrongAttempts[scenario.id] || 0) + 1;
+      setWrongAttempts(prev => ({ ...prev, [scenario.id]: nextAttempts }));
+      setEliminatedOptions(prev => ({
+        ...prev,
+        [scenario.id]: [...(prev[scenario.id] || []), optIdx]
+      }));
+
+      if (nextAttempts === 1) {
+        // First wrong guess: DO NOT reveal answer! Pass to other team!
+        setFeedback({
+          isCorrect: false,
+          isPassed: true,
+          text: `❌ Critical flaw in plan by ${teams[turnTeam].name}! Chance passes to ${teams[otherTeam].name} to mitigate the hazard!`
+        });
+        onSwitchTurn();
+      } else {
+        // Second wrong guess: Both teams missed! NOW reveal the answer!
+        setScenarioResolved(prev => ({ ...prev, [scenario.id]: true }));
+        const correctOpt = scenario.options.find(o => o.isCorrect);
+        setFeedback({
+          isCorrect: false,
+          isPassed: false,
+          text: `❌ BOTH TEAMS FAILED MITIGATION! The correct strategy was: "${correctOpt?.text}". ${scenario.explanation}`
+        });
+      }
     }
   };
 
@@ -70,7 +102,7 @@ export const Mission5Crisis: React.FC<Props> = ({
     }
   };
 
-  const totalResolved = Object.values(scenarioResults).filter(Boolean).length;
+  const totalResolved = Object.values(scenarioResolved).filter(Boolean).length;
   const isAllResolved = totalResolved >= CRISIS_SCENARIOS.length;
 
   return (
@@ -175,18 +207,19 @@ export const Mission5Crisis: React.FC<Props> = ({
 
             <div className="space-y-3">
               {scenario.options.map((opt, idx) => {
-                const isSelected = selectedAnswers[scenario.id] === idx;
                 const isCorrect = opt.isCorrect;
-                const hasAnswered = selectedAnswers[scenario.id] !== undefined;
+                const isEliminated = eliminatedOptions[scenario.id]?.includes(idx);
+                const isResolved = scenarioResolved[scenario.id];
 
-                let optClass = "bg-amber-50/70 border-slate-900 text-slate-900 hover:bg-yellow-100 shadow-[3px_3px_0px_0px_#0f172a]";
-                if (hasAnswered) {
+                let optClass = "bg-amber-50/70 border-slate-900 text-slate-900 hover:bg-yellow-100 shadow-[3px_3px_0px_0px_#0f172a] cursor-pointer";
+
+                if (isEliminated) {
+                  optClass = "bg-rose-100/70 border-rose-900/40 text-rose-900 line-through opacity-70 cursor-not-allowed shadow-none";
+                } else if (isResolved) {
                   if (isCorrect) {
                     optClass = "bg-emerald-200 border-emerald-950 text-emerald-950 font-black shadow-[4px_4px_0px_0px_#064e3b] ring-2 ring-emerald-400";
-                  } else if (isSelected) {
-                    optClass = "bg-rose-100 border-rose-950 text-rose-950 font-bold";
                   } else {
-                    optClass = "bg-slate-100 border-slate-300 text-slate-400 opacity-60";
+                    optClass = "bg-slate-100 border-slate-300 text-slate-400 opacity-60 cursor-default shadow-none";
                   }
                 }
 
@@ -194,11 +227,16 @@ export const Mission5Crisis: React.FC<Props> = ({
                   <button
                     key={idx}
                     onClick={() => handleSelectOption(idx)}
-                    disabled={scenarioResults[scenario.id]}
-                    className={`w-full p-4 rounded-2xl border-2 text-left text-xs sm:text-sm font-bold transition flex items-center justify-between cursor-pointer ${optClass}`}
+                    disabled={isResolved || isEliminated}
+                    className={`w-full p-4 rounded-2xl border-2 text-left text-xs sm:text-sm font-bold transition flex items-center justify-between ${optClass}`}
                   >
                     <span>{opt.text}</span>
-                    {hasAnswered && isCorrect && (
+                    {isEliminated && (
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-rose-200 text-rose-900 font-black border border-rose-400">
+                        ❌ Ruled Out
+                      </span>
+                    )}
+                    {isResolved && isCorrect && (
                       <CheckCircle2 className="w-5 h-5 text-emerald-700 shrink-0 ml-2" />
                     )}
                   </button>
@@ -209,8 +247,10 @@ export const Mission5Crisis: React.FC<Props> = ({
 
           {/* Feedback */}
           {feedback && (
-            <div className={`p-4 rounded-2xl border-2 border-slate-900 text-xs sm:text-sm font-bold flex items-start gap-2.5 shadow-[3px_3px_0px_0px_#0f172a] animate-fade-in ${
-              feedback.isCorrect
+            <div className={`p-4 rounded-2xl border-2.5 border-slate-900 text-xs sm:text-sm font-black flex items-start gap-2.5 shadow-[3px_3px_0px_0px_#0f172a] animate-fade-in ${
+              feedback.isPassed
+                ? 'bg-yellow-300 text-slate-950 ring-2 ring-yellow-400 animate-bounce'
+                : feedback.isCorrect
                 ? 'bg-emerald-100 text-emerald-950'
                 : 'bg-rose-100 text-rose-950'
             }`}>

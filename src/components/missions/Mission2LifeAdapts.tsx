@@ -27,13 +27,19 @@ export const Mission2LifeAdapts: React.FC<Props> = ({
   // Human Matching State
   const [humanMatches, setHumanMatches] = useState<Record<string, LandformType>>({});
   const [humanCorrect, setHumanCorrect] = useState<Record<string, boolean>>({});
-  const [humanFeedback, setHumanFeedback] = useState<string | null>(null);
+  const [eliminatedHumanTargets, setEliminatedHumanTargets] = useState<Record<string, LandformType[]>>({});
+  const [wrongHumanAttempts, setWrongHumanAttempts] = useState<Record<string, number>>({});
+  const [humanResolved, setHumanResolved] = useState<Record<string, boolean>>({});
+  const [humanFeedbackInfo, setHumanFeedbackInfo] = useState<{ isCorrect: boolean; isPassed?: boolean; text: string } | null>(null);
 
   // Animal Reasoning State
   const [currentAnimalIdx, setCurrentAnimalIdx] = useState<number>(0);
   const [animalAnswers, setAnimalAnswers] = useState<Record<string, number>>({});
   const [animalCorrect, setAnimalCorrect] = useState<Record<string, boolean>>({});
-  const [animalFeedback, setAnimalFeedback] = useState<string | null>(null);
+  const [eliminatedAnimalOptions, setEliminatedAnimalOptions] = useState<Record<string, number[]>>({});
+  const [wrongAnimalAttempts, setWrongAnimalAttempts] = useState<Record<string, number>>({});
+  const [animalResolved, setAnimalResolved] = useState<Record<string, boolean>>({});
+  const [animalFeedbackInfo, setAnimalFeedbackInfo] = useState<{ isCorrect: boolean; isPassed?: boolean; text: string } | null>(null);
 
   const landformTargets: { id: LandformType; label: string; icon: string }[] = [
     { id: 'mountains', label: 'Mountains', icon: '🏔️' },
@@ -45,23 +51,57 @@ export const Mission2LifeAdapts: React.FC<Props> = ({
 
   // Match a human occupation to a landform
   const handleMatchHuman = (charId: string, landform: LandformType) => {
+    if (humanResolved[charId]) return;
+    if (eliminatedHumanTargets[charId]?.includes(landform)) return;
+
     soundEngine.playClick();
     const character = ADAPTATION_CHARACTERS.find(c => c.id === charId);
     if (!character) return;
 
     setHumanMatches(prev => ({ ...prev, [charId]: landform }));
 
+    const otherTeam = turnTeam === 'terraformers' ? 'earthkeepers' : 'terraformers';
     const isSuitable = character.suitableLandforms.includes(landform);
+
     if (isSuitable) {
-      if (!humanCorrect[charId]) {
-        soundEngine.playCorrect();
-        onAwardPoints(100, 'adaptation');
-        setHumanCorrect(prev => ({ ...prev, [charId]: true }));
-      }
-      setHumanFeedback(`✓ EXCELLENT! ${character.title} thrives in ${landform.toUpperCase()}: ${character.explanation}`);
+      soundEngine.playCorrect();
+      const isSteal = (wrongHumanAttempts[charId] || 0) > 0;
+      onAwardPoints(100, 'adaptation');
+      setHumanCorrect(prev => ({ ...prev, [charId]: true }));
+      setHumanResolved(prev => ({ ...prev, [charId]: true }));
+      setHumanFeedbackInfo({
+        isCorrect: true,
+        isPassed: false,
+        text: isSteal
+          ? `🎯 STEAL SUCCESSFUL (+100 LP for ${teams[turnTeam].name})! ${character.title} thrives in ${landform.toUpperCase()}: ${character.explanation}`
+          : `✓ EXCELLENT (+100 LP for ${teams[turnTeam].name})! ${character.title} thrives in ${landform.toUpperCase()}: ${character.explanation}`
+      });
     } else {
       soundEngine.playWrong();
-      setHumanFeedback(`⚠️ Suboptimal match. Consider what natural resources and topography ${character.title} requires!`);
+      const nextAttempts = (wrongHumanAttempts[charId] || 0) + 1;
+      setWrongHumanAttempts(prev => ({ ...prev, [charId]: nextAttempts }));
+      setEliminatedHumanTargets(prev => ({
+        ...prev,
+        [charId]: [...(prev[charId] || []), landform]
+      }));
+
+      if (nextAttempts === 1) {
+        // First wrong guess: DO NOT reveal answer! Pass to other team!
+        setHumanFeedbackInfo({
+          isCorrect: false,
+          isPassed: true,
+          text: `❌ Suboptimal match by ${teams[turnTeam].name}! Chance passes to ${teams[otherTeam].name} to match ${character.title}!`
+        });
+        onSwitchTurn();
+      } else {
+        // Second wrong guess: Both teams missed! NOW reveal the answer!
+        setHumanResolved(prev => ({ ...prev, [charId]: true }));
+        setHumanFeedbackInfo({
+          isCorrect: false,
+          isPassed: false,
+          text: `❌ BOTH TEAMS MISSED! ${character.title} belongs in ${character.primaryLandform.toUpperCase()}: ${character.explanation}`
+        });
+      }
     }
   };
 
@@ -69,26 +109,61 @@ export const Mission2LifeAdapts: React.FC<Props> = ({
   const currentAnimal = ADAPTATION_ANIMALS[currentAnimalIdx];
 
   const handleSelectAnimalReason = (optionIdx: number) => {
+    if (animalResolved[currentAnimal.id]) return;
+    if (eliminatedAnimalOptions[currentAnimal.id]?.includes(optionIdx)) return;
+
     soundEngine.playClick();
     setAnimalAnswers(prev => ({ ...prev, [currentAnimal.id]: optionIdx }));
 
+    const otherTeam = turnTeam === 'terraformers' ? 'earthkeepers' : 'terraformers';
     const isCorrect = optionIdx === currentAnimal.correctReasonIdx;
+
     if (isCorrect) {
-      if (!animalCorrect[currentAnimal.id]) {
-        soundEngine.playCorrect();
-        onAwardPoints(120, 'adaptation');
-        setAnimalCorrect(prev => ({ ...prev, [currentAnimal.id]: true }));
-      }
-      setAnimalFeedback(`✓ BRILLIANT REASONING (+120 LP): ${currentAnimal.explanation}`);
+      soundEngine.playCorrect();
+      const isSteal = (wrongAnimalAttempts[currentAnimal.id] || 0) > 0;
+      onAwardPoints(120, 'adaptation');
+      setAnimalCorrect(prev => ({ ...prev, [currentAnimal.id]: true }));
+      setAnimalResolved(prev => ({ ...prev, [currentAnimal.id]: true }));
+      setAnimalFeedbackInfo({
+        isCorrect: true,
+        isPassed: false,
+        text: isSteal
+          ? `🎯 STEAL SUCCESSFUL (+120 LP for ${teams[turnTeam].name})! ${currentAnimal.explanation}`
+          : `✓ BRILLIANT REASONING (+120 LP for ${teams[turnTeam].name})! ${currentAnimal.explanation}`
+      });
     } else {
       soundEngine.playWrong();
-      setAnimalFeedback("⚠️ Not quite. Think about how anatomical adaptations counter specific environmental challenges.");
+      const nextAttempts = (wrongAnimalAttempts[currentAnimal.id] || 0) + 1;
+      setWrongAnimalAttempts(prev => ({ ...prev, [currentAnimal.id]: nextAttempts }));
+      setEliminatedAnimalOptions(prev => ({
+        ...prev,
+        [currentAnimal.id]: [...(prev[currentAnimal.id] || []), optionIdx]
+      }));
+
+      if (nextAttempts === 1) {
+        // First wrong guess: DO NOT reveal answer! Pass to other team!
+        setAnimalFeedbackInfo({
+          isCorrect: false,
+          isPassed: true,
+          text: `❌ Wrong reasoning by ${teams[turnTeam].name}! Chance passes to ${teams[otherTeam].name} to steal!`
+        });
+        onSwitchTurn();
+      } else {
+        // Second wrong guess: Both teams missed! NOW reveal the answer!
+        setAnimalResolved(prev => ({ ...prev, [currentAnimal.id]: true }));
+        const correctText = currentAnimal.reasoningOptions[currentAnimal.correctReasonIdx];
+        setAnimalFeedbackInfo({
+          isCorrect: false,
+          isPassed: false,
+          text: `❌ BOTH TEAMS MISSED! The correct reason was: "${correctText}". ${currentAnimal.explanation}`
+        });
+      }
     }
   };
 
-  const totalHumansCorrect = Object.values(humanCorrect).filter(Boolean).length;
-  const totalAnimalsCorrect = Object.values(animalCorrect).filter(Boolean).length;
-  const isAllComplete = totalHumansCorrect >= 6 && totalAnimalsCorrect >= 4;
+  const totalHumansResolved = Object.values(humanResolved).filter(Boolean).length;
+  const totalAnimalsResolved = Object.values(animalResolved).filter(Boolean).length;
+  const isAllComplete = totalHumansResolved >= 6 && totalAnimalsResolved >= 4;
 
   return (
     <div className="relative min-h-[calc(100vh-60px)] p-4 sm:p-6 bg-transparent text-slate-900 select-none">
@@ -112,7 +187,7 @@ export const Mission2LifeAdapts: React.FC<Props> = ({
             <div className="bg-white border-2.5 border-slate-900 px-4 py-2 rounded-2xl flex items-center gap-3 shadow-[3px_3px_0px_0px_#0f172a]">
               <span className="text-xs text-slate-700 font-black">Progress:</span>
               <span className="text-sm font-black text-emerald-700">
-                {totalHumansCorrect}/6 Humans • {totalAnimalsCorrect}/4 Animals
+                {totalHumansResolved}/6 Humans • {totalAnimalsResolved}/4 Animals
               </span>
             </div>
 
@@ -147,7 +222,7 @@ export const Mission2LifeAdapts: React.FC<Props> = ({
           >
             <span>👨‍🌾 Human Livelihoods</span>
             <span className="text-xs px-2 py-0.5 rounded-full bg-slate-900 text-white font-black">
-              {totalHumansCorrect}/6
+              {totalHumansResolved}/6
             </span>
           </button>
 
@@ -161,7 +236,7 @@ export const Mission2LifeAdapts: React.FC<Props> = ({
           >
             <span>🐐 Animal Adaptations & Reasoning</span>
             <span className="text-xs px-2 py-0.5 rounded-full bg-slate-900 text-white font-black">
-              {totalAnimalsCorrect}/4
+              {totalAnimalsResolved}/4
             </span>
           </button>
         </div>
@@ -180,6 +255,7 @@ export const Mission2LifeAdapts: React.FC<Props> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {ADAPTATION_CHARACTERS.map((char) => {
                 const isMatched = humanCorrect[char.id];
+                const isResolved = humanResolved[char.id];
                 const currentChoice = humanMatches[char.id];
 
                 return (
@@ -188,6 +264,8 @@ export const Mission2LifeAdapts: React.FC<Props> = ({
                     className={`p-5 rounded-3xl border-2.5 border-slate-900 transition-all duration-300 shadow-[4px_4px_0px_0px_#0f172a] flex flex-col justify-between ${
                       isMatched
                         ? 'bg-emerald-100'
+                        : isResolved
+                        ? 'bg-slate-100 opacity-80'
                         : 'bg-white hover:-translate-y-1'
                     }`}
                   >
@@ -197,6 +275,10 @@ export const Mission2LifeAdapts: React.FC<Props> = ({
                         {isMatched ? (
                           <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-200 text-emerald-950 font-black border border-emerald-900 flex items-center gap-1">
                             <CheckCircle2 className="w-3.5 h-3.5" /> Matched
+                          </span>
+                        ) : isResolved ? (
+                          <span className="text-xs px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-800 font-black border border-slate-400">
+                            Revealed
                           </span>
                         ) : (
                           <span className="text-xs text-slate-600 font-black">Select Landform</span>
@@ -217,21 +299,33 @@ export const Mission2LifeAdapts: React.FC<Props> = ({
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
                         {landformTargets.map((lf) => {
                           const isSelected = currentChoice === lf.id;
+                          const isEliminated = eliminatedHumanTargets[char.id]?.includes(lf.id);
+                          const isCorrectTarget = char.suitableLandforms.includes(lf.id);
+
+                          let btnStyle = "bg-amber-50 hover:bg-yellow-200 text-slate-900 shadow-[1px_1px_0px_0px_#0f172a] cursor-pointer";
+
+                          if (isEliminated) {
+                            btnStyle = "bg-rose-100 text-rose-900 line-through opacity-60 cursor-not-allowed shadow-none";
+                          } else if (isResolved) {
+                            if (isCorrectTarget) {
+                              btnStyle = "bg-emerald-300 text-emerald-950 font-black shadow-[2px_2px_0px_0px_#0f172a] ring-2 ring-emerald-500";
+                            } else {
+                              btnStyle = "bg-slate-100 text-slate-400 opacity-60 shadow-none cursor-default";
+                            }
+                          } else if (isSelected && isMatched) {
+                            btnStyle = "bg-emerald-300 text-emerald-950 shadow-[1px_1px_0px_0px_#0f172a]";
+                          }
+
                           return (
                             <button
                               key={lf.id}
                               onClick={() => handleMatchHuman(char.id, lf.id)}
-                              disabled={isMatched}
-                              className={`p-1.5 rounded-xl text-[11px] font-black border-2 border-slate-900 transition flex items-center justify-center gap-1 cursor-pointer ${
-                                isSelected && isMatched
-                                  ? 'bg-emerald-300 text-emerald-950 shadow-[1px_1px_0px_0px_#0f172a]'
-                                  : isSelected && !isMatched
-                                  ? 'bg-rose-200 text-rose-950'
-                                  : 'bg-amber-50 hover:bg-yellow-200 text-slate-900 shadow-[1px_1px_0px_0px_#0f172a]'
-                              }`}
+                              disabled={isResolved || isEliminated}
+                              className={`p-1.5 rounded-xl text-[11px] font-black border-2 border-slate-900 transition flex items-center justify-center gap-1 ${btnStyle}`}
                             >
                               <span>{lf.icon}</span>
                               <span className="truncate">{lf.label}</span>
+                              {isEliminated && <span className="text-[9px]">❌</span>}
                             </button>
                           );
                         })}
@@ -243,10 +337,16 @@ export const Mission2LifeAdapts: React.FC<Props> = ({
             </div>
 
             {/* Live Feedback Banner */}
-            {humanFeedback && (
-              <div className="p-4 rounded-2xl bg-emerald-100 border-2 border-slate-900 text-xs sm:text-sm text-emerald-950 font-bold flex items-start gap-2.5 shadow-[3px_3px_0px_0px_#0f172a] animate-fade-in">
+            {humanFeedbackInfo && (
+              <div className={`p-4 rounded-2xl border-2.5 border-slate-900 text-xs sm:text-sm font-black flex items-start gap-2.5 shadow-[3px_3px_0px_0px_#0f172a] animate-fade-in ${
+                humanFeedbackInfo.isPassed
+                  ? 'bg-yellow-300 text-slate-950 ring-2 ring-yellow-400 animate-bounce'
+                  : humanFeedbackInfo.isCorrect
+                  ? 'bg-emerald-100 text-emerald-950'
+                  : 'bg-rose-100 text-rose-950'
+              }`}>
                 <Sparkles className="w-4 h-4 shrink-0 text-amber-600 mt-0.5" />
-                <span>{humanFeedback}</span>
+                <span>{humanFeedbackInfo.text}</span>
               </div>
             )}
           </div>
@@ -254,33 +354,16 @@ export const Mission2LifeAdapts: React.FC<Props> = ({
 
         {/* ================= PHASE B: ANIMAL ADAPTATION REASONING ================= */}
         {activeTab === 'animals' && (
-          <div className="max-w-3xl mx-auto space-y-6">
-            {/* Animal Selection Bar */}
-            <div className="grid grid-cols-4 gap-2">
-              {ADAPTATION_ANIMALS.map((a, idx) => {
-                const isDone = animalCorrect[a.id];
-                const isCurrent = currentAnimalIdx === idx;
-
-                return (
-                  <button
-                    key={a.id}
-                    onClick={() => { soundEngine.playClick(); setCurrentAnimalIdx(idx); setAnimalFeedback(null); }}
-                    className={`p-3 rounded-2xl border-2.5 border-slate-900 text-center transition flex flex-col items-center cursor-pointer ${
-                      isCurrent
-                        ? 'bg-yellow-300 text-slate-950 shadow-[4px_4px_0px_0px_#0f172a] scale-105'
-                        : 'bg-white hover:bg-slate-50 text-slate-800 shadow-[2px_2px_0px_0px_#0f172a]'
-                    }`}
-                  >
-                    <span className="text-3xl mb-1">{a.icon}</span>
-                    <span className="text-xs font-black truncate max-w-full">{a.name}</span>
-                    {isDone && <CheckCircle2 className="w-4 h-4 text-emerald-700 mt-1" />}
-                  </button>
-                );
-              })}
+          <div className="space-y-6">
+            <div className="p-4 rounded-2xl bg-white border-2 border-slate-900 text-xs sm:text-sm text-slate-900 font-bold flex items-center justify-between shadow-[3px_3px_0px_0px_#0f172a]">
+              <span>Discover why these species evolved specialized traits in extreme landforms.</span>
+              <span className="font-black text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full border border-slate-900">
+                ⭐ +120 Life Points per correct reasoning
+              </span>
             </div>
 
-            {/* Current Animal Challenge Card */}
-            <div className="p-6 sm:p-8 rounded-3xl bg-white border-3 border-slate-900 shadow-[6px_6px_0px_0px_#0f172a] space-y-5">
+            {/* Active Animal Card */}
+            <div className="p-6 sm:p-8 rounded-3xl bg-white border-3 border-slate-900 shadow-[6px_6px_0px_0px_#0f172a] space-y-6">
               <div className="flex items-center justify-between border-b-2 border-slate-900 pb-4">
                 <div className="flex items-center gap-3">
                   <span className="text-5xl">{currentAnimal.icon}</span>
@@ -311,18 +394,19 @@ export const Mission2LifeAdapts: React.FC<Props> = ({
 
                 <div className="space-y-2.5">
                   {currentAnimal.reasoningOptions.map((opt: string, idx: number) => {
-                    const isSelected = animalAnswers[currentAnimal.id] === idx;
                     const isCorrect = idx === currentAnimal.correctReasonIdx;
-                    const hasAnswered = animalAnswers[currentAnimal.id] !== undefined;
+                    const isEliminated = eliminatedAnimalOptions[currentAnimal.id]?.includes(idx);
+                    const isResolved = animalResolved[currentAnimal.id];
 
-                    let optClass = "bg-amber-50/70 border-slate-900 text-slate-900 hover:bg-yellow-100 shadow-[3px_3px_0px_0px_#0f172a]";
-                    if (hasAnswered) {
+                    let optClass = "bg-amber-50/70 border-slate-900 text-slate-900 hover:bg-yellow-100 shadow-[3px_3px_0px_0px_#0f172a] cursor-pointer";
+
+                    if (isEliminated) {
+                      optClass = "bg-rose-100/70 border-rose-900/40 text-rose-900 line-through opacity-70 cursor-not-allowed shadow-none";
+                    } else if (isResolved) {
                       if (isCorrect) {
                         optClass = "bg-emerald-200 border-emerald-950 text-emerald-950 font-black shadow-[4px_4px_0px_0px_#064e3b] ring-2 ring-emerald-400";
-                      } else if (isSelected) {
-                        optClass = "bg-rose-100 border-rose-950 text-rose-950 font-bold";
                       } else {
-                        optClass = "bg-slate-100 border-slate-300 text-slate-400 opacity-60";
+                        optClass = "bg-slate-100 border-slate-300 text-slate-400 opacity-60 cursor-default shadow-none";
                       }
                     }
 
@@ -330,11 +414,16 @@ export const Mission2LifeAdapts: React.FC<Props> = ({
                       <button
                         key={idx}
                         onClick={() => handleSelectAnimalReason(idx)}
-                        disabled={animalCorrect[currentAnimal.id]}
-                        className={`w-full p-3.5 rounded-2xl border-2 text-left text-xs sm:text-sm font-bold transition flex items-center justify-between cursor-pointer ${optClass}`}
+                        disabled={isResolved || isEliminated}
+                        className={`w-full p-3.5 rounded-2xl border-2 text-left text-xs sm:text-sm font-bold transition flex items-center justify-between ${optClass}`}
                       >
                         <span>{opt}</span>
-                        {hasAnswered && isCorrect && <CheckCircle2 className="w-5 h-5 text-emerald-700 shrink-0 ml-2" />}
+                        {isEliminated && (
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-rose-200 text-rose-900 font-black border border-rose-400">
+                            ❌ Ruled Out
+                          </span>
+                        )}
+                        {isResolved && isCorrect && <CheckCircle2 className="w-5 h-5 text-emerald-700 shrink-0 ml-2" />}
                       </button>
                     );
                   })}
@@ -342,10 +431,16 @@ export const Mission2LifeAdapts: React.FC<Props> = ({
               </div>
 
               {/* Feedback Banner */}
-              {animalFeedback && (
-                <div className="p-4 rounded-2xl bg-emerald-100 border-2 border-slate-900 text-xs sm:text-sm text-emerald-950 font-bold flex items-start gap-2 shadow-[3px_3px_0px_0px_#0f172a] animate-fade-in">
+              {animalFeedbackInfo && (
+                <div className={`p-4 rounded-2xl border-2.5 border-slate-900 text-xs sm:text-sm font-black flex items-start gap-2 shadow-[3px_3px_0px_0px_#0f172a] animate-fade-in ${
+                  animalFeedbackInfo.isPassed
+                    ? 'bg-yellow-300 text-slate-950 ring-2 ring-yellow-400 animate-bounce'
+                    : animalFeedbackInfo.isCorrect
+                    ? 'bg-emerald-100 text-emerald-950'
+                    : 'bg-rose-100 text-rose-950'
+                }`}>
                   <Sparkles className="w-4 h-4 shrink-0 text-amber-600 mt-0.5" />
-                  <span>{animalFeedback}</span>
+                  <span>{animalFeedbackInfo.text}</span>
                 </div>
               )}
 
@@ -361,7 +456,7 @@ export const Mission2LifeAdapts: React.FC<Props> = ({
                 <button
                   onClick={() => {
                     soundEngine.playClick();
-                    setAnimalFeedback(null);
+                    setAnimalFeedbackInfo(null);
                     if (currentAnimalIdx < ADAPTATION_ANIMALS.length - 1) {
                       setCurrentAnimalIdx(prev => prev + 1);
                     } else {

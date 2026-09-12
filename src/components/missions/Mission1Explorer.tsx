@@ -27,7 +27,10 @@ export const Mission1Explorer: React.FC<Props> = ({
   const [activeTab, setActiveTab] = useState<LandformType>('mountains');
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, number>>({});
   const [answeredCorrectly, setAnsweredCorrectly] = useState<Record<string, boolean>>({});
-  const [feedback, setFeedback] = useState<{ isCorrect: boolean; text: string } | null>(null);
+  const [eliminatedAnswers, setEliminatedAnswers] = useState<Record<string, number[]>>({});
+  const [wrongAttempts, setWrongAttempts] = useState<Record<string, number>>({});
+  const [questionResolved, setQuestionResolved] = useState<Record<string, boolean>>({});
+  const [feedback, setFeedback] = useState<{ isCorrect: boolean; isPassed?: boolean; text: string } | null>(null);
 
   // Feature Scan Activity State
   const [scannedFeatures, setScannedFeatures] = useState<Record<string, Set<string>>>({
@@ -65,18 +68,28 @@ export const Mission1Explorer: React.FC<Props> = ({
       icon: "🟩"
     },
     valleys: {
-      elevation: "Sheltered Basin 🏞️",
-      climate: "Temperate Climate 🍏",
-      slope: "U-Shaped Trough ⛰️",
-      primaryUse: "Fruit Orchards 🍎",
+      elevation: "Sheltered Basin",
+      climate: "Mild & Protected 🌤️",
+      slope: "Gentle Floor 🏞️",
+      primaryUse: "Orchards & Rivers 🍎",
       icon: "🏞️"
     },
     coasts: {
-      elevation: "Sea Level (0m) 🌊",
-      climate: "Maritime Breeze 🌴",
-      slope: "Shores & Cliffs 🏖️",
-      primaryUse: "Seaports & Trade ⚓",
+      elevation: "Sea Level (0m)",
+      climate: "Maritime Humid 🌊",
+      slope: "Flat Shore & Dunes 🏖️",
+      primaryUse: "Ports & Fisheries 🚢",
       icon: "🌊"
+    }
+  };
+
+  const handleLevelSelect = (levelKey: LandformType) => {
+    soundEngine.playClick();
+    setActiveTab(levelKey);
+    setSelectedHotspotName(null);
+    setFeedback(null);
+    if (!scannedFeatures[levelKey]) {
+      setScannedFeatures(prev => ({ ...prev, [levelKey]: new Set() }));
     }
   };
 
@@ -93,26 +106,55 @@ export const Mission1Explorer: React.FC<Props> = ({
   };
 
   const handleSelectOption = (optionIdx: number) => {
+    if (questionResolved[activeTab]) return;
+    if (eliminatedAnswers[activeTab]?.includes(optionIdx)) return;
+
     soundEngine.playClick();
     setSelectedAnswers(prev => ({ ...prev, [activeTab]: optionIdx }));
 
+    const otherTeam = turnTeam === 'terraformers' ? 'earthkeepers' : 'terraformers';
     const isCorrect = optionIdx === currentLandform.question.correctIdx;
+
     if (isCorrect) {
-      if (!answeredCorrectly[activeTab]) {
-        soundEngine.playCorrect();
-        onAwardPoints(100, 'knowledge');
-        setAnsweredCorrectly(prev => ({ ...prev, [activeTab]: true }));
-      }
+      soundEngine.playCorrect();
+      const isSteal = (wrongAttempts[activeTab] || 0) > 0;
+      onAwardPoints(100, 'knowledge');
+      setAnsweredCorrectly(prev => ({ ...prev, [activeTab]: true }));
+      setQuestionResolved(prev => ({ ...prev, [activeTab]: true }));
       setFeedback({
         isCorrect: true,
-        text: `✓ CORRECT! (+100 LP): ${currentLandform.question.explanation}`
+        isPassed: false,
+        text: isSteal
+          ? `🎯 STEAL SUCCESSFUL (+100 LP for ${teams[turnTeam].name})! ${currentLandform.question.explanation}`
+          : `✓ CORRECT (+100 LP for ${teams[turnTeam].name})! ${currentLandform.question.explanation}`
       });
     } else {
       soundEngine.playWrong();
-      setFeedback({
-        isCorrect: false,
-        text: "⚠️ Not quite. Think about the slope, terrain gradient, and environmental conditions!"
-      });
+      const nextAttempts = (wrongAttempts[activeTab] || 0) + 1;
+      setWrongAttempts(prev => ({ ...prev, [activeTab]: nextAttempts }));
+      setEliminatedAnswers(prev => ({
+        ...prev,
+        [activeTab]: [...(prev[activeTab] || []), optionIdx]
+      }));
+
+      if (nextAttempts === 1) {
+        // First wrong guess: DO NOT reveal answer! Pass to the other team!
+        setFeedback({
+          isCorrect: false,
+          isPassed: true,
+          text: `❌ WRONG GUESS by ${teams[turnTeam].name}! Chance passes to ${teams[otherTeam].name} to steal!`
+        });
+        onSwitchTurn();
+      } else {
+        // Second wrong guess: Both teams missed! NOW reveal the answer!
+        setQuestionResolved(prev => ({ ...prev, [activeTab]: true }));
+        const correctText = currentLandform.question.options[currentLandform.question.correctIdx];
+        setFeedback({
+          isCorrect: false,
+          isPassed: false,
+          text: `❌ BOTH TEAMS MISSED! The correct answer was: "${correctText}". ${currentLandform.question.explanation}`
+        });
+      }
     }
   };
 
@@ -138,8 +180,8 @@ export const Mission1Explorer: React.FC<Props> = ({
   };
 
   const currentScannedCount = scannedFeatures[activeTab]?.size || 0;
-  const totalAnswered = Object.values(answeredCorrectly).filter(Boolean).length;
-  const isMissionFinished = totalAnswered >= 5;
+  const totalResolved = Object.values(questionResolved).filter(Boolean).length;
+  const isMissionFinished = totalResolved >= 5;
   const dials = visualDials[activeTab];
 
   return (
@@ -160,7 +202,7 @@ export const Mission1Explorer: React.FC<Props> = ({
           <div className="flex items-center gap-3">
             <div className="bg-white border-2.5 border-slate-900 px-4 py-2 rounded-2xl flex items-center gap-2 shadow-[3px_3px_0px_0px_#0f172a]">
               <span className="text-xs text-slate-700 font-black uppercase">Regions Cleared:</span>
-              <span className="text-sm font-black text-emerald-600">{totalAnswered} / 5</span>
+              <span className="text-sm font-black text-emerald-600">{totalResolved} / 5</span>
             </div>
             {isMissionFinished && (
               <button
@@ -473,18 +515,19 @@ export const Mission1Explorer: React.FC<Props> = ({
               {/* 4 Tactile Smart Board Touch Cards */}
               <div className="space-y-2">
                 {currentLandform.question.options.map((opt, idx) => {
-                  const isSelected = selectedAnswers[activeTab] === idx;
                   const isCorrectAnswer = idx === currentLandform.question.correctIdx;
-                  const hasAnswered = selectedAnswers[activeTab] !== undefined;
+                  const isEliminated = eliminatedAnswers[activeTab]?.includes(idx);
+                  const isResolved = questionResolved[activeTab];
 
-                  let optClass = "bg-amber-50/70 border-slate-900 text-slate-900 hover:bg-yellow-100 shadow-[3px_3px_0px_0px_#0f172a] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none";
-                  if (hasAnswered) {
+                  let optClass = "bg-amber-50/70 border-slate-900 text-slate-900 hover:bg-yellow-100 shadow-[3px_3px_0px_0px_#0f172a] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none cursor-pointer";
+
+                  if (isEliminated) {
+                    optClass = "bg-rose-100/70 border-rose-900/40 text-rose-900 line-through opacity-70 cursor-not-allowed shadow-none";
+                  } else if (isResolved) {
                     if (isCorrectAnswer) {
                       optClass = "bg-emerald-200 border-emerald-950 text-emerald-950 font-black shadow-[4px_4px_0px_0px_#064e3b] ring-2 ring-emerald-400";
-                    } else if (isSelected) {
-                      optClass = "bg-rose-100 border-rose-950 text-rose-950 font-bold shadow-[2px_2px_0px_0px_#881337]";
                     } else {
-                      optClass = "bg-slate-100 border-slate-300 text-slate-400 opacity-60 shadow-none";
+                      optClass = "bg-slate-100 border-slate-300 text-slate-400 opacity-60 shadow-none cursor-default";
                     }
                   }
 
@@ -492,11 +535,16 @@ export const Mission1Explorer: React.FC<Props> = ({
                     <button
                       key={idx}
                       onClick={() => handleSelectOption(idx)}
-                      disabled={answeredCorrectly[activeTab]}
-                      className={`w-full p-3 rounded-2xl border-2 text-left text-xs sm:text-sm font-bold transition-all flex items-center justify-between cursor-pointer ${optClass}`}
+                      disabled={isResolved || isEliminated}
+                      className={`w-full p-3 rounded-2xl border-2 text-left text-xs sm:text-sm font-bold transition-all flex items-center justify-between ${optClass}`}
                     >
                       <span>{opt}</span>
-                      {hasAnswered && isCorrectAnswer && (
+                      {isEliminated && (
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-rose-200 text-rose-900 font-black border border-rose-400">
+                          ❌ Ruled Out
+                        </span>
+                      )}
+                      {isResolved && isCorrectAnswer && (
                         <CheckCircle2 className="w-5 h-5 text-emerald-700 shrink-0 ml-2" />
                       )}
                     </button>
@@ -506,8 +554,10 @@ export const Mission1Explorer: React.FC<Props> = ({
 
               {/* Feedback Banner */}
               {feedback && (
-                <div className={`mt-3 p-3 rounded-2xl border-2 border-slate-900 text-xs sm:text-sm font-bold leading-relaxed flex items-start gap-2 shadow-[3px_3px_0px_0px_#0f172a] animate-fade-in ${
-                  feedback.isCorrect
+                <div className={`mt-3 p-3 rounded-2xl border-2.5 border-slate-900 text-xs sm:text-sm font-black leading-relaxed flex items-start gap-2 shadow-[3px_3px_0px_0px_#0f172a] animate-fade-in ${
+                  feedback.isPassed
+                    ? 'bg-yellow-300 text-slate-950 ring-2 ring-yellow-400 animate-bounce'
+                    : feedback.isCorrect
                     ? 'bg-emerald-100 text-emerald-950'
                     : 'bg-rose-100 text-rose-950'
                 }`}>
