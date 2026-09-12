@@ -1,12 +1,16 @@
 "use client";
 
 import React, { useState } from 'react';
-import { BuildingItem, PlacedBuilding, LandformType } from '@/types/game';
+import { BuildingItem, PlacedBuilding, LandformType, TeamId, TeamState } from '@/types/game';
 import { BUILDING_ITEMS, FARM_DECISION, ROUTE_WAYPOINTS } from '@/data/settlementData';
+import { TurnBanner } from '@/components/ui/TurnBanner';
 import { CheckCircle2, AlertTriangle, Hammer, Compass, Sparkles, Navigation, ArrowRight } from 'lucide-react';
 import { soundEngine } from '@/utils/soundEngine';
 
 interface Props {
+  turnTeam: TeamId;
+  teams: Record<TeamId, TeamState>;
+  onSwitchTurn: () => void;
   placedBuildings: PlacedBuilding[];
   onUpdateBuildings: (buildings: PlacedBuilding[]) => void;
   buildingPoints: number;
@@ -18,6 +22,9 @@ interface Props {
 }
 
 export const Mission3Settlement: React.FC<Props> = ({
+  turnTeam,
+  teams,
+  onSwitchTurn,
   placedBuildings,
   onUpdateBuildings,
   buildingPoints,
@@ -176,6 +183,14 @@ export const Mission3Settlement: React.FC<Props> = ({
             )}
           </div>
         </div>
+
+        {/* Turn-based Smart Board Banner */}
+        <TurnBanner
+          turnTeam={turnTeam}
+          teams={teams}
+          onSwitchTurn={onSwitchTurn}
+          actionPrompt="Plan the settlement, choose fertile farmland, or route the valley highway!"
+        />
 
         {/* 3 Simulation Sub-Tabs */}
         <div className="flex items-center gap-3 mb-6">

@@ -3,15 +3,26 @@
 import React, { useState } from 'react';
 import { LandformType } from '@/types/game';
 import { ADAPTATION_CHARACTERS, ADAPTATION_ANIMALS } from '@/data/adaptationsData';
+import { TurnBanner } from '@/components/ui/TurnBanner';
+import { TeamId, TeamState } from '@/types/game';
 import { CheckCircle2, HelpCircle, Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
 import { soundEngine } from '@/utils/soundEngine';
 
 interface Props {
+  turnTeam: TeamId;
+  teams: Record<TeamId, TeamState>;
+  onSwitchTurn: () => void;
   onComplete: () => void;
   onAwardPoints: (amount: number, category: 'adaptation') => void;
 }
 
-export const Mission2LifeAdapts: React.FC<Props> = ({ onComplete, onAwardPoints }) => {
+export const Mission2LifeAdapts: React.FC<Props> = ({
+  turnTeam,
+  teams,
+  onSwitchTurn,
+  onComplete,
+  onAwardPoints
+}) => {
   const [activeTab, setActiveTab] = useState<'humans' | 'animals'>('humans');
 
   // Human Matching State
@@ -116,6 +127,14 @@ export const Mission2LifeAdapts: React.FC<Props> = ({ onComplete, onAwardPoints 
             )}
           </div>
         </div>
+
+        {/* Turn-based Smart Board Banner */}
+        <TurnBanner
+          turnTeam={turnTeam}
+          teams={teams}
+          onSwitchTurn={onSwitchTurn}
+          actionPrompt="Match human livelihoods or solve the animal adaptation 'Why?' question!"
+        />
 
         {/* Phase Toggle Tabs */}
         <div className="flex items-center gap-3 mb-6">

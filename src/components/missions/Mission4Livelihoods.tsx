@@ -2,10 +2,15 @@
 
 import React, { useState } from 'react';
 import { LandformType } from '@/types/game';
+import { TurnBanner } from '@/components/ui/TurnBanner';
+import { TeamId, TeamState } from '@/types/game';
 import { CheckCircle2, Briefcase, Sparkles, ArrowRight, Compass } from 'lucide-react';
 import { soundEngine } from '@/utils/soundEngine';
 
 interface Props {
+  turnTeam: TeamId;
+  teams: Record<TeamId, TeamState>;
+  onSwitchTurn: () => void;
   onComplete: () => void;
   onAwardPoints: (amount: number, category: 'knowledge') => void;
 }
@@ -74,7 +79,13 @@ const LIVELIHOODS: LivelihoodItem[] = [
   }
 ];
 
-export const Mission4Livelihoods: React.FC<Props> = ({ onComplete, onAwardPoints }) => {
+export const Mission4Livelihoods: React.FC<Props> = ({
+  turnTeam,
+  teams,
+  onSwitchTurn,
+  onComplete,
+  onAwardPoints
+}) => {
   const [matches, setMatches] = useState<Record<string, LandformType>>({});
   const [correctMatches, setCorrectMatches] = useState<Record<string, boolean>>({});
   const [feedback, setFeedback] = useState<string | null>(null);
@@ -143,6 +154,14 @@ export const Mission4Livelihoods: React.FC<Props> = ({ onComplete, onAwardPoints
             )}
           </div>
         </div>
+
+        {/* Turn-based Smart Board Banner */}
+        <TurnBanner
+          turnTeam={turnTeam}
+          teams={teams}
+          onSwitchTurn={onSwitchTurn}
+          actionPrompt="Choose the most suitable landform for this economic livelihood!"
+        />
 
         {/* Livelihoods Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">

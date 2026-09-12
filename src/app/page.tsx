@@ -86,6 +86,9 @@ export default function GamePage() {
 
         {currentStage === 'mission_1' && (
           <Mission1Explorer
+            turnTeam={turnTeam}
+            teams={teams}
+            onSwitchTurn={switchTurn}
             onComplete={() => {
               markMissionComplete('mission_1');
               setCurrentStage('map');
@@ -96,6 +99,9 @@ export default function GamePage() {
 
         {currentStage === 'mission_2' && (
           <Mission2LifeAdapts
+            turnTeam={turnTeam}
+            teams={teams}
+            onSwitchTurn={switchTurn}
             onComplete={() => {
               markMissionComplete('mission_2');
               setCurrentStage('map');
@@ -106,6 +112,9 @@ export default function GamePage() {
 
         {currentStage === 'mission_3' && (
           <Mission3Settlement
+            turnTeam={turnTeam}
+            teams={teams}
+            onSwitchTurn={switchTurn}
             placedBuildings={placedBuildings}
             onUpdateBuildings={setPlacedBuildings}
             buildingPoints={buildingPoints}
@@ -122,6 +131,9 @@ export default function GamePage() {
 
         {currentStage === 'mission_4' && (
           <Mission4Livelihoods
+            turnTeam={turnTeam}
+            teams={teams}
+            onSwitchTurn={switchTurn}
             onComplete={() => {
               markMissionComplete('mission_4');
               setCurrentStage('map');
@@ -132,6 +144,9 @@ export default function GamePage() {
 
         {currentStage === 'mission_5' && (
           <Mission5Crisis
+            turnTeam={turnTeam}
+            teams={teams}
+            onSwitchTurn={switchTurn}
             onComplete={() => {
               markMissionComplete('mission_5');
               setCurrentStage('map');

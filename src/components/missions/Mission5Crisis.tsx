@@ -2,15 +2,26 @@
 
 import React, { useState } from 'react';
 import { CRISIS_SCENARIOS } from '@/data/crisisScenarios';
+import { TurnBanner } from '@/components/ui/TurnBanner';
+import { TeamId, TeamState } from '@/types/game';
 import { AlertTriangle, ShieldAlert, CheckCircle2, ArrowRight, Sparkles, Compass } from 'lucide-react';
 import { soundEngine } from '@/utils/soundEngine';
 
 interface Props {
+  turnTeam: TeamId;
+  teams: Record<TeamId, TeamState>;
+  onSwitchTurn: () => void;
   onComplete: () => void;
   onAwardPoints: (amount: number, category: 'decisions') => void;
 }
 
-export const Mission5Crisis: React.FC<Props> = ({ onComplete, onAwardPoints }) => {
+export const Mission5Crisis: React.FC<Props> = ({
+  turnTeam,
+  teams,
+  onSwitchTurn,
+  onComplete,
+  onAwardPoints
+}) => {
   const [currentIdx, setCurrentIdx] = useState<number>(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, number>>({});
   const [scenarioResults, setScenarioResults] = useState<Record<string, boolean>>({});
@@ -95,6 +106,14 @@ export const Mission5Crisis: React.FC<Props> = ({ onComplete, onAwardPoints }) =
             )}
           </div>
         </div>
+
+        {/* Turn-based Smart Board Banner */}
+        <TurnBanner
+          turnTeam={turnTeam}
+          teams={teams}
+          onSwitchTurn={onSwitchTurn}
+          actionPrompt="Evaluate the environmental disaster scenario and select the best mitigation strategy!"
+        />
 
         {/* Crisis Step Pills */}
         <div className="grid grid-cols-4 gap-2 mb-6">

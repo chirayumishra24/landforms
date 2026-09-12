@@ -4,15 +4,26 @@ import React, { useState } from 'react';
 import { LandformType } from '@/types/game';
 import { LANDFORMS_DATA } from '@/data/landformsData';
 import { LandformViewer3D } from '@/components/3d/LandformViewer3D';
+import { TurnBanner } from '@/components/ui/TurnBanner';
+import { TeamId, TeamState } from '@/types/game';
 import { CheckCircle2, ArrowRight, ArrowLeft, Award, HelpCircle, Sparkles, Compass } from 'lucide-react';
 import { soundEngine } from '@/utils/soundEngine';
 
 interface Props {
+  turnTeam: TeamId;
+  teams: Record<TeamId, TeamState>;
+  onSwitchTurn: () => void;
   onComplete: () => void;
   onAwardPoints: (amount: number, category: 'knowledge') => void;
 }
 
-export const Mission1Explorer: React.FC<Props> = ({ onComplete, onAwardPoints }) => {
+export const Mission1Explorer: React.FC<Props> = ({
+  turnTeam,
+  teams,
+  onSwitchTurn,
+  onComplete,
+  onAwardPoints
+}) => {
   const landformKeys: LandformType[] = ['mountains', 'plateaus', 'plains', 'valleys', 'coasts'];
   const [activeTab, setActiveTab] = useState<LandformType>('mountains');
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, number>>({});
@@ -99,6 +110,14 @@ export const Mission1Explorer: React.FC<Props> = ({ onComplete, onAwardPoints })
             )}
           </div>
         </div>
+
+        {/* Turn-based Smart Board Banner */}
+        <TurnBanner
+          turnTeam={turnTeam}
+          teams={teams}
+          onSwitchTurn={onSwitchTurn}
+          actionPrompt="Inspect the terrain model and choose the correct geographical answer!"
+        />
 
         {/* 5 Landform Category Navigation Tabs */}
         <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-6 scrollbar-none">
