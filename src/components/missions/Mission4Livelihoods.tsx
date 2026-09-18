@@ -93,6 +93,14 @@ export const Mission4Livelihoods: React.FC<Props> = ({
   const [livelihoodResolved, setLivelihoodResolved] = useState<Record<string, boolean>>({});
   const [feedback, setFeedback] = useState<{ isCorrect: boolean; isPassed?: boolean; text: string } | null>(null);
 
+  const turnTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  React.useEffect(() => {
+    return () => {
+      if (turnTimeoutRef.current) clearTimeout(turnTimeoutRef.current);
+    };
+  }, []);
+
   const landformZones: { id: LandformType; label: string; icon: string }[] = [
     { id: 'mountains', label: 'Mountains', icon: '🏔️' },
     { id: 'plateaus', label: 'Plateaus', icon: '🟫' },
@@ -115,7 +123,7 @@ export const Mission4Livelihoods: React.FC<Props> = ({
     if (isMatch) {
       soundEngine.playCorrect();
       const isSteal = attempts > 0;
-      const points = isSteal ? 120 : 100;
+      const points = isSteal ? 150 : 100;
       onAwardPoints(points, 'knowledge');
       setCorrectMatches(prev => ({ ...prev, [item.id]: true }));
       setLivelihoodResolved(prev => ({ ...prev, [item.id]: true }));
@@ -127,6 +135,11 @@ export const Mission4Livelihoods: React.FC<Props> = ({
           ? `🎯 STEAL SUCCESSFUL (+${points} LP for ${teams[turnTeam].name})! ${item.geographicalReason}`
           : `✓ EXCELLENT ALLOCATION (+${points} LP for ${teams[turnTeam].name})! ${item.geographicalReason}`
       });
+
+      if (turnTimeoutRef.current) clearTimeout(turnTimeoutRef.current);
+      turnTimeoutRef.current = setTimeout(() => {
+        onSwitchTurn();
+      }, 2600);
     } else {
       soundEngine.playWrong();
       const nextAttempts = attempts + 1;
@@ -143,9 +156,10 @@ export const Mission4Livelihoods: React.FC<Props> = ({
           isPassed: true,
           text: `❌ SUBOPTIMAL GEOGRAPHY by ${teams[turnTeam].name}! Chance passes to ${teams[otherTeam].name} to allocate ${item.title}!`
         });
-        setTimeout(() => {
+        if (turnTimeoutRef.current) clearTimeout(turnTimeoutRef.current);
+        turnTimeoutRef.current = setTimeout(() => {
           onSwitchTurn();
-        }, 1500);
+        }, 1800);
       } else {
         setLivelihoodResolved(prev => ({ ...prev, [item.id]: true }));
         setFeedback({
@@ -153,6 +167,10 @@ export const Mission4Livelihoods: React.FC<Props> = ({
           isPassed: false,
           text: `❌ BOTH TEAMS MISSED! ${item.title} belongs in ${item.primaryLandform.toUpperCase()}: ${item.geographicalReason}`
         });
+        if (turnTimeoutRef.current) clearTimeout(turnTimeoutRef.current);
+        turnTimeoutRef.current = setTimeout(() => {
+          onSwitchTurn();
+        }, 2600);
       }
     }
   };

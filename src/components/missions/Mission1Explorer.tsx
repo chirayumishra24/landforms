@@ -83,7 +83,16 @@ export const Mission1Explorer: React.FC<Props> = ({
     }
   };
 
+  const turnTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  React.useEffect(() => {
+    return () => {
+      if (turnTimeoutRef.current) clearTimeout(turnTimeoutRef.current);
+    };
+  }, []);
+
   const handleLevelSelect = (levelKey: LandformType) => {
+    if (turnTimeoutRef.current) clearTimeout(turnTimeoutRef.current);
     soundEngine.playClick();
     setActiveTab(levelKey);
     setSelectedHotspotName(null);
@@ -128,6 +137,18 @@ export const Mission1Explorer: React.FC<Props> = ({
           ? `🎯 STEAL SUCCESSFUL (+100 LP for ${teams[turnTeam].name})! ${currentLandform.question.explanation}`
           : `✓ CORRECT (+100 LP for ${teams[turnTeam].name})! ${currentLandform.question.explanation}`
       });
+
+      // Show result/explanation first, then play turn change animation and advance
+      if (turnTimeoutRef.current) clearTimeout(turnTimeoutRef.current);
+      turnTimeoutRef.current = setTimeout(() => {
+        onSwitchTurn();
+        const currIdx = landformKeys.indexOf(activeTab);
+        if (currIdx < landformKeys.length - 1) {
+          setActiveTab(landformKeys[currIdx + 1]);
+          setFeedback(null);
+          setSelectedHotspotName(null);
+        }
+      }, 2600);
     } else {
       soundEngine.playWrong();
       const nextAttempts = (wrongAttempts[activeTab] || 0) + 1;
@@ -144,9 +165,10 @@ export const Mission1Explorer: React.FC<Props> = ({
           isPassed: true,
           text: `❌ WRONG GUESS by ${teams[turnTeam].name}! Chance passes to ${teams[otherTeam].name} to steal!`
         });
-        setTimeout(() => {
+        if (turnTimeoutRef.current) clearTimeout(turnTimeoutRef.current);
+        turnTimeoutRef.current = setTimeout(() => {
           onSwitchTurn();
-        }, 1500);
+        }, 1800);
       } else {
         // Second wrong guess: Both teams missed! NOW reveal the answer!
         setQuestionResolved(prev => ({ ...prev, [activeTab]: true }));
@@ -156,11 +178,22 @@ export const Mission1Explorer: React.FC<Props> = ({
           isPassed: false,
           text: `❌ BOTH TEAMS MISSED! The correct answer was: "${correctText}". ${currentLandform.question.explanation}`
         });
+        if (turnTimeoutRef.current) clearTimeout(turnTimeoutRef.current);
+        turnTimeoutRef.current = setTimeout(() => {
+          onSwitchTurn();
+          const currIdx = landformKeys.indexOf(activeTab);
+          if (currIdx < landformKeys.length - 1) {
+            setActiveTab(landformKeys[currIdx + 1]);
+            setFeedback(null);
+            setSelectedHotspotName(null);
+          }
+        }, 3000);
       }
     }
   };
 
   const handleNextTab = () => {
+    if (turnTimeoutRef.current) clearTimeout(turnTimeoutRef.current);
     soundEngine.playClick();
     setFeedback(null);
     setSelectedHotspotName(null);
@@ -174,6 +207,7 @@ export const Mission1Explorer: React.FC<Props> = ({
   };
 
   const handlePrevTab = () => {
+    if (turnTimeoutRef.current) clearTimeout(turnTimeoutRef.current);
     soundEngine.playClick();
     setFeedback(null);
     setSelectedHotspotName(null);

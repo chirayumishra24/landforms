@@ -30,6 +30,14 @@ export const Mission5Crisis: React.FC<Props> = ({
   const [scenarioResolved, setScenarioResolved] = useState<Record<string, boolean>>({});
   const [feedback, setFeedback] = useState<{ isCorrect: boolean; isPassed?: boolean; text: string } | null>(null);
 
+  const turnTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  React.useEffect(() => {
+    return () => {
+      if (turnTimeoutRef.current) clearTimeout(turnTimeoutRef.current);
+    };
+  }, []);
+
   const scenario = CRISIS_SCENARIOS[currentIdx];
 
   const handleSelectOption = (optIdx: number) => {
@@ -55,6 +63,15 @@ export const Mission5Crisis: React.FC<Props> = ({
           ? `🎯 DISASTER AVERTED! ${teams[turnTeam].name} steals +200 LP: ${option.feedback}`
           : `✓ MITIGATION SUCCESSFUL (+200 LP for ${teams[turnTeam].name}): ${option.feedback}`
       });
+
+      if (turnTimeoutRef.current) clearTimeout(turnTimeoutRef.current);
+      turnTimeoutRef.current = setTimeout(() => {
+        onSwitchTurn();
+        if (currentIdx < CRISIS_SCENARIOS.length - 1) {
+          setCurrentIdx(prev => prev + 1);
+          setFeedback(null);
+        }
+      }, 2600);
     } else {
       soundEngine.playWrong();
       const nextAttempts = (wrongAttempts[scenario.id] || 0) + 1;
@@ -71,9 +88,10 @@ export const Mission5Crisis: React.FC<Props> = ({
           isPassed: true,
           text: `❌ Critical flaw in plan by ${teams[turnTeam].name}! Chance passes to ${teams[otherTeam].name} to mitigate the hazard!`
         });
-        setTimeout(() => {
+        if (turnTimeoutRef.current) clearTimeout(turnTimeoutRef.current);
+        turnTimeoutRef.current = setTimeout(() => {
           onSwitchTurn();
-        }, 1500);
+        }, 1800);
       } else {
         // Second wrong guess: Both teams missed! NOW reveal the answer!
         setScenarioResolved(prev => ({ ...prev, [scenario.id]: true }));
@@ -83,11 +101,20 @@ export const Mission5Crisis: React.FC<Props> = ({
           isPassed: false,
           text: `❌ BOTH TEAMS FAILED MITIGATION! The correct strategy was: "${correctOpt?.text}". ${scenario.explanation}`
         });
+        if (turnTimeoutRef.current) clearTimeout(turnTimeoutRef.current);
+        turnTimeoutRef.current = setTimeout(() => {
+          onSwitchTurn();
+          if (currentIdx < CRISIS_SCENARIOS.length - 1) {
+            setCurrentIdx(prev => prev + 1);
+            setFeedback(null);
+          }
+        }, 2600);
       }
     }
   };
 
   const handleNext = () => {
+    if (turnTimeoutRef.current) clearTimeout(turnTimeoutRef.current);
     soundEngine.playClick();
     setFeedback(null);
     onSwitchTurn();
