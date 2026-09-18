@@ -65,13 +65,15 @@ export const Mission5Crisis: React.FC<Props> = ({
       }));
 
       if (nextAttempts === 1) {
-        // First wrong guess: DO NOT reveal answer! Pass to other team!
+        // First wrong guess: DO NOT reveal answer! Show feedback first, then pass after delay
         setFeedback({
           isCorrect: false,
           isPassed: true,
           text: `❌ Critical flaw in plan by ${teams[turnTeam].name}! Chance passes to ${teams[otherTeam].name} to mitigate the hazard!`
         });
-        onSwitchTurn();
+        setTimeout(() => {
+          onSwitchTurn();
+        }, 1500);
       } else {
         // Second wrong guess: Both teams missed! NOW reveal the answer!
         setScenarioResolved(prev => ({ ...prev, [scenario.id]: true }));

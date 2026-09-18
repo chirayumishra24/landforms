@@ -113,13 +113,15 @@ export const LandformBlitz: React.FC<Props> = ({
       setEliminatedOptions(prev => [...prev, idx]);
 
       if (nextAttempts === 1) {
-        // First wrong guess: DO NOT reveal answer! Pass turn!
+        // First wrong guess: DO NOT reveal answer! Show feedback first, then pass after delay
         setAnsweredFeedback({
           isCorrect: false,
           isPassed: true,
           text: `❌ Incorrect by ${currentTeamName}! Chance passes to ${otherTeamName} to steal!`
         });
-        if (onSwitchTurn) onSwitchTurn();
+        setTimeout(() => {
+          if (onSwitchTurn) onSwitchTurn();
+        }, 1500);
       } else {
         // Second wrong guess: Both missed! NOW reveal the answer!
         setAnsweredFeedback({

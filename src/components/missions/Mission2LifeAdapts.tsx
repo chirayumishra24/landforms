@@ -86,13 +86,15 @@ export const Mission2LifeAdapts: React.FC<Props> = ({
       }));
 
       if (nextAttempts === 1) {
-        // First wrong guess: DO NOT reveal answer! Pass to other team!
+        // First wrong guess: DO NOT reveal answer! Show feedback first, then pass after delay
         setHumanFeedbackInfo({
           isCorrect: false,
           isPassed: true,
           text: `❌ Suboptimal match by ${teams[turnTeam].name}! Chance passes to ${teams[otherTeam].name} to match ${character.title}!`
         });
-        onSwitchTurn();
+        setTimeout(() => {
+          onSwitchTurn();
+        }, 1500);
       } else {
         // Second wrong guess: Both teams missed! NOW reveal the answer!
         setHumanResolved(prev => ({ ...prev, [charId]: true }));
@@ -141,13 +143,15 @@ export const Mission2LifeAdapts: React.FC<Props> = ({
       }));
 
       if (nextAttempts === 1) {
-        // First wrong guess: DO NOT reveal answer! Pass to other team!
+        // First wrong guess: DO NOT reveal answer! Show feedback first, then pass after delay
         setAnimalFeedbackInfo({
           isCorrect: false,
           isPassed: true,
           text: `❌ Wrong reasoning by ${teams[turnTeam].name}! Chance passes to ${teams[otherTeam].name} to steal!`
         });
-        onSwitchTurn();
+        setTimeout(() => {
+          onSwitchTurn();
+        }, 1500);
       } else {
         // Second wrong guess: Both teams missed! NOW reveal the answer!
         setAnimalResolved(prev => ({ ...prev, [currentAnimal.id]: true }));

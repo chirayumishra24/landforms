@@ -143,7 +143,9 @@ export const Mission4Livelihoods: React.FC<Props> = ({
           isPassed: true,
           text: `❌ SUBOPTIMAL GEOGRAPHY by ${teams[turnTeam].name}! Chance passes to ${teams[otherTeam].name} to allocate ${item.title}!`
         });
-        onSwitchTurn();
+        setTimeout(() => {
+          onSwitchTurn();
+        }, 1500);
       } else {
         setLivelihoodResolved(prev => ({ ...prev, [item.id]: true }));
         setFeedback({
