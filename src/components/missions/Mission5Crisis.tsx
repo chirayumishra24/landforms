@@ -115,7 +115,7 @@ export const Mission5Crisis: React.FC<Props> = ({
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-200 text-rose-950 text-xs font-black uppercase tracking-wider mb-1 border-2 border-slate-900 shadow-[2px_2px_0px_0px_#0f172a]">
               <ShieldAlert className="w-3.5 h-3.5 text-rose-900" />
-              <span>Mission 5 of 5 • Environmental Hazards</span>
+              <span>Mission 4 of 4 • Environmental Hazards</span>
             </div>
             <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-slate-950 flex items-center gap-2">
               <span>🚨 GEOGRAPHY CRISIS & HAZARD RESPONSE</span>

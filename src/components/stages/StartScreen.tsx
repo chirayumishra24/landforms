@@ -6,12 +6,18 @@ import { soundEngine } from '@/utils/soundEngine';
 
 interface Props {
   onStart: () => void;
+  onStartRandom: () => void;
 }
 
-export const StartScreen: React.FC<Props> = ({ onStart }) => {
+export const StartScreen: React.FC<Props> = ({ onStart, onStartRandom }) => {
   const handleStart = () => {
     soundEngine.playClick();
     onStart();
+  };
+
+  const handleStartRandom = () => {
+    soundEngine.playVictoryFanfare();
+    onStartRandom();
   };
 
   return (
@@ -53,8 +59,8 @@ export const StartScreen: React.FC<Props> = ({ onStart }) => {
           {[
             { label: 'Explore', icon: '🧭', bg: 'bg-blue-100 text-blue-950 border-blue-900' },
             { label: 'Plan', icon: '📐', bg: 'bg-teal-100 text-teal-950 border-teal-900' },
-            { label: 'Build', icon: '🏗️', bg: 'bg-amber-100 text-amber-950 border-amber-900' },
             { label: 'Adapt', icon: '🌿', bg: 'bg-emerald-100 text-emerald-950 border-emerald-900' },
+            { label: 'Restore', icon: '🛡️', bg: 'bg-amber-100 text-amber-950 border-amber-900' },
             { label: 'Compete', icon: '🏆', bg: 'bg-rose-100 text-rose-950 border-rose-900' },
           ].map((item, idx) => (
             <div
@@ -67,14 +73,23 @@ export const StartScreen: React.FC<Props> = ({ onStart }) => {
           ))}
         </div>
 
-        {/* Primary CTA Button */}
+        {/* Primary CTA Buttons */}
         <div className="flex flex-col sm:flex-row items-center gap-4 mt-1">
           <button
             onClick={handleStart}
-            className="group relative px-10 sm:px-14 py-4 rounded-2xl bg-yellow-300 hover:bg-yellow-400 border-3 border-slate-900 text-slate-950 font-black text-xl sm:text-2xl tracking-wide shadow-[6px_6px_0px_0px_#0f172a] hover:shadow-[7px_7px_0px_0px_#0f172a] transition-all transform hover:-translate-y-1 active:translate-x-1 active:translate-y-1 active:shadow-none flex items-center gap-3 cursor-pointer"
+            className="group relative px-9 sm:px-12 py-4 rounded-2xl bg-yellow-300 hover:bg-yellow-400 border-3 border-slate-900 text-slate-950 font-black text-lg sm:text-2xl tracking-wide shadow-[6px_6px_0px_0px_#0f172a] hover:shadow-[7px_7px_0px_0px_#0f172a] transition-all transform hover:-translate-y-1 active:translate-x-1 active:translate-y-1 active:shadow-none flex items-center gap-3 cursor-pointer"
           >
             <span>START JOURNEY</span>
             <span className="text-2xl group-hover:translate-x-1.5 transition-transform">➔</span>
+          </button>
+
+          <button
+            onClick={handleStartRandom}
+            className="group relative px-8 sm:px-10 py-4 rounded-2xl bg-white hover:bg-amber-50 border-3 border-slate-900 text-slate-950 font-black text-lg sm:text-xl tracking-wide shadow-[6px_6px_0px_0px_#0f172a] hover:shadow-[7px_7px_0px_0px_#0f172a] transition-all transform hover:-translate-y-1 active:translate-x-1 active:translate-y-1 active:shadow-none flex items-center gap-2.5 cursor-pointer"
+            title="Teacher Quick Launch: Start with a random stage directly"
+          >
+            <span className="text-2xl">🎲</span>
+            <span>START RANDOM STAGE</span>
           </button>
         </div>
 

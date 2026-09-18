@@ -10,7 +10,6 @@ import { HowToPlay } from '@/components/stages/HowToPlay';
 import { MainGameMap } from '@/components/stages/MainGameMap';
 import { Mission1Explorer } from '@/components/missions/Mission1Explorer';
 import { Mission2LifeAdapts } from '@/components/missions/Mission2LifeAdapts';
-import { Mission3Settlement } from '@/components/missions/Mission3Settlement';
 import { Mission4Livelihoods } from '@/components/missions/Mission4Livelihoods';
 import { Mission5Crisis } from '@/components/missions/Mission5Crisis';
 import { LandformBlitz } from '@/components/missions/LandformBlitz';
@@ -19,6 +18,16 @@ import { FinalScore } from '@/components/stages/FinalScore';
 import { LearningSummary } from '@/components/stages/LearningSummary';
 import { TurnTransitionOverlay } from '@/components/ui/TurnTransitionOverlay';
 import { LandformSceneryBackground } from '@/components/layout/LandformSceneryBackground';
+import { GameStage } from '@/types/game';
+
+const PLAYABLE_STAGES: GameStage[] = [
+  'mission_1',
+  'mission_2',
+  'mission_4',
+  'mission_5',
+  'blitz',
+  'restore'
+];
 
 export default function GamePage() {
   const {
@@ -41,6 +50,12 @@ export default function GamePage() {
     awardPoints,
     resetGame
   } = useGameState();
+
+  const handleStartRandomStage = React.useCallback(() => {
+    const randomIndex = Math.floor(Math.random() * PLAYABLE_STAGES.length);
+    const selected = PLAYABLE_STAGES[randomIndex];
+    setCurrentStage(selected);
+  }, [setCurrentStage]);
 
   const [showTurnOverlay, setShowTurnOverlay] = React.useState(false);
   const prevTurnTeam = React.useRef(turnTeam);
@@ -81,12 +96,16 @@ export default function GamePage() {
         completedMissions={completedMissions}
         onReset={resetGame}
         onNavigateMap={() => setCurrentStage('map')}
+        onStartRandom={handleStartRandomStage}
       />
 
       {/* Main Content Area Routing Based on Current Stage */}
       <main className="flex-1 flex flex-col">
         {currentStage === 'start' && (
-          <StartScreen onStart={() => setCurrentStage('story')} />
+          <StartScreen
+            onStart={() => setCurrentStage('story')}
+            onStartRandom={handleStartRandomStage}
+          />
         )}
 
         {currentStage === 'story' && (
@@ -110,6 +129,7 @@ export default function GamePage() {
             placedBuildings={placedBuildings}
             routeConnected={routeConnected}
             onSelectMission={(stage) => setCurrentStage(stage)}
+            onStartRandom={handleStartRandomStage}
           />
         )}
 
@@ -133,25 +153,6 @@ export default function GamePage() {
             onSwitchTurn={switchTurn}
             onComplete={() => {
               markMissionComplete('mission_2');
-              setCurrentStage('map');
-            }}
-            onAwardPoints={(amt, cat) => awardPoints(amt, cat)}
-          />
-        )}
-
-        {currentStage === 'mission_3' && (
-          <Mission3Settlement
-            turnTeam={turnTeam}
-            teams={teams}
-            onSwitchTurn={switchTurn}
-            placedBuildings={placedBuildings}
-            onUpdateBuildings={setPlacedBuildings}
-            buildingPoints={buildingPoints}
-            onUpdatePoints={setBuildingPoints}
-            routeConnected={routeConnected}
-            onUpdateRouteConnected={setRouteConnected}
-            onComplete={() => {
-              markMissionComplete('mission_3');
               setCurrentStage('map');
             }}
             onAwardPoints={(amt, cat) => awardPoints(amt, cat)}

@@ -173,7 +173,7 @@ export const Mission2LifeAdapts: React.FC<Props> = ({
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-950 text-xs font-black uppercase tracking-wider mb-1 border-2 border-slate-900 shadow-[2px_2px_0px_0px_#0f172a]">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
-              <span>Mission 2 of 5</span>
+              <span>Mission 2 of 4</span>
             </div>
             <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-slate-950 flex items-center gap-2">
               <span>🌱 LIFE ADAPTS: HUMANS & WILDLIFE</span>

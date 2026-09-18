@@ -23,26 +23,20 @@ export const HowToPlay: React.FC<Props> = ({ onContinue }) => {
       bg: "bg-cyan-100 border-cyan-900 shadow-[4px_4px_0px_0px_#155e75]"
     },
     {
-      icon: "🏘️",
-      title: "3. Build Settlements",
-      desc: "Spend 100 Building Points wisely. Avoid steep landslide hazards and connect farms to marketplaces and ports.",
-      bg: "bg-amber-100 border-amber-900 shadow-[4px_4px_0px_0px_#78350f]"
-    },
-    {
       icon: "🌾",
-      title: "4. Choose Livelihoods",
+      title: "3. Choose Livelihoods",
       desc: "Match agriculture, mining, fisheries, pastoralism, and tourism with the natural resource profile of the land.",
       bg: "bg-emerald-100 border-emerald-900 shadow-[4px_4px_0px_0px_#064e3b]"
     },
     {
       icon: "⚠️",
-      title: "5. Respond to Crises",
+      title: "4. Respond to Crises",
       desc: "Mitigate cyclones, floods, landslides, and droughts using sound ecological and geological planning.",
       bg: "bg-rose-100 border-rose-900 shadow-[4px_4px_0px_0px_#881337]"
     },
     {
       icon: "⭐",
-      title: "6. Earn Life Points",
+      title: "5. Earn Life Points",
       desc: "Accumulate Life Points (LP) for smart decisions. The squad with the highest geographical wisdom wins the trophy!",
       bg: "bg-purple-100 border-purple-900 shadow-[4px_4px_0px_0px_#581c87]"
     }
@@ -65,11 +59,11 @@ export const HowToPlay: React.FC<Props> = ({ onContinue }) => {
             HOW TO PLAY & WIN
           </h2>
           <p className="text-slate-800 text-sm sm:text-base font-bold">
-            Master the core cycle: <strong className="text-emerald-700">EXPLORE → DISCOVER → DECIDE → BUILD → ADAPT → WIN</strong>
+            Master the core cycle: <strong className="text-emerald-700">EXPLORE → DISCOVER → DECIDE → ADAPT → WIN</strong>
           </p>
         </div>
 
-        {/* 6 Grid Cards */}
+        {/* 5 Grid Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-8">
           {steps.map((step, idx) => (
             <div
@@ -99,7 +93,7 @@ export const HowToPlay: React.FC<Props> = ({ onContinue }) => {
             </div>
           </div>
           <div className="text-xs text-slate-700 font-black bg-slate-100 px-3 py-1 rounded-xl border border-slate-300">
-            Missions 1-5 • Blitz • Final Restoration
+            Missions 1-4 • Blitz • Final Restoration
           </div>
         </div>
 

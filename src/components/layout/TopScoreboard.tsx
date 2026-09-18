@@ -14,6 +14,7 @@ interface Props {
   completedMissions: string[];
   onReset: () => void;
   onNavigateMap: () => void;
+  onStartRandom?: () => void;
 }
 
 export const TopScoreboard: React.FC<Props> = ({
@@ -24,7 +25,8 @@ export const TopScoreboard: React.FC<Props> = ({
   regionHealth,
   completedMissions,
   onReset,
-  onNavigateMap
+  onNavigateMap,
+  onStartRandom
 }) => {
   const [isMuted, setIsMuted] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -57,9 +59,8 @@ export const TopScoreboard: React.FC<Props> = ({
       case 'map': return 'Regional Tactical Map';
       case 'mission_1': return 'Mission 1: Landform Explorer';
       case 'mission_2': return 'Mission 2: Life Adapts';
-      case 'mission_3': return 'Mission 3: Build a Settlement';
-      case 'mission_4': return 'Mission 4: Land & Livelihoods';
-      case 'mission_5': return 'Mission 5: Geography Crisis';
+      case 'mission_4': return 'Mission 3: Land & Livelihoods';
+      case 'mission_5': return 'Mission 4: Geography Crisis';
       case 'blitz': return 'Bonus: Landform Blitz';
       case 'restore': return 'Final Challenge: Restore Region';
       case 'final_score': return 'Championship Results';
@@ -187,10 +188,22 @@ export const TopScoreboard: React.FC<Props> = ({
             </div>
           )}
 
+          {/* Teacher Random Stage Button */}
+          {onStartRandom && (
+            <button
+              onClick={onStartRandom}
+              className="px-2.5 py-1.5 rounded-xl bg-yellow-300 hover:bg-yellow-400 border-2 border-slate-900 shadow-[2px_2px_0px_0px_#0f172a] text-slate-950 font-black text-xs active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition flex items-center gap-1 cursor-pointer"
+              title="Teacher Quick Launch: Start a random mission/stage"
+            >
+              <span>🎲</span>
+              <span className="hidden sm:inline">Random</span>
+            </button>
+          )}
+
           {/* Fullscreen Button */}
           <button
             onClick={toggleFullscreen}
-            className="p-2 rounded-xl bg-yellow-300 hover:bg-yellow-400 border-2 border-slate-900 shadow-[2px_2px_0px_0px_#0f172a] text-slate-950 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition flex items-center justify-center cursor-pointer"
+            className="p-2 rounded-xl bg-white hover:bg-slate-100 border-2 border-slate-900 shadow-[2px_2px_0px_0px_#0f172a] text-slate-950 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition flex items-center justify-center cursor-pointer"
             title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen (Smart Board)"}
           >
             {isFullscreen ? (

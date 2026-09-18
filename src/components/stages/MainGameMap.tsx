@@ -8,17 +8,19 @@ import { soundEngine } from '@/utils/soundEngine';
 interface Props {
   completedMissions: string[];
   regionHealth: number;
-  placedBuildings: PlacedBuilding[];
+  placedBuildings?: PlacedBuilding[];
   routeConnected: boolean;
   onSelectMission: (stage: GameStage) => void;
+  onStartRandom?: () => void;
 }
 
 export const MainGameMap: React.FC<Props> = ({
   completedMissions,
   regionHealth,
-  placedBuildings,
+  placedBuildings = [],
   routeConnected,
-  onSelectMission
+  onSelectMission,
+  onStartRandom
 }) => {
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
 
@@ -40,37 +42,26 @@ export const MainGameMap: React.FC<Props> = ({
       number: 2,
       title: "Life Adapts",
       icon: "🌱",
-      x: 16,
+      x: 18,
       y: 52,
       landform: "River Valley",
       description: "Match human livelihoods and animal adaptations to their terrain."
     },
     {
-      id: "mission_3",
-      stage: "mission_3" as GameStage,
-      number: 3,
-      title: "Build a Settlement",
-      icon: "🏘️",
-      x: 78,
-      y: 28,
-      landform: "Plateau & Highland Plain",
-      description: "Construct settlements, choose fertile farmland, and route roads."
-    },
-    {
       id: "mission_4",
       stage: "mission_4" as GameStage,
-      number: 4,
+      number: 3,
       title: "Land & Livelihoods",
       icon: "💼",
-      x: 52,
-      y: 56,
-      landform: "Alluvial Plains",
+      x: 54,
+      y: 48,
+      landform: "Alluvial Plains & Plateau",
       description: "Allocate agriculture, mining, fishing, and tourism strategically."
     },
     {
       id: "mission_5",
       stage: "mission_5" as GameStage,
-      number: 5,
+      number: 4,
       title: "Geography Crisis",
       icon: "🚨",
       x: 82,
@@ -80,14 +71,13 @@ export const MainGameMap: React.FC<Props> = ({
     }
   ];
 
-  const isMissionUnlocked = (index: number) => {
-    if (index === 0) return true;
-    const prevMission = missions[index - 1];
-    return completedMissions.includes(prevMission.id);
+  const isMissionUnlocked = (_index: number) => {
+    // Teachers and students can freely choose any mission or start with a random stage
+    return true;
   };
 
-  const isBlitzUnlocked = completedMissions.includes("mission_5");
-  const isRestoreUnlocked = completedMissions.includes("mission_5");
+  const isBlitzUnlocked = true;
+  const isRestoreUnlocked = completedMissions.length >= 2;
 
   const handleNodeClick = (stage: GameStage, unlocked: boolean) => {
     if (!unlocked) {
@@ -114,20 +104,33 @@ export const MainGameMap: React.FC<Props> = ({
           </p>
         </div>
 
-        {/* Region Evolution Pill */}
-        <div className="flex items-center gap-3 bg-white border-2.5 border-slate-900 px-4 py-2 rounded-2xl shadow-[4px_4px_0px_0px_#0f172a]">
-          <div className="text-left">
-            <div className="text-[10px] uppercase font-black text-slate-600 tracking-wider">Region Evolution</div>
-            <div className="text-xs sm:text-sm font-black text-emerald-700">
-              {regionHealth < 25 && "Stage 0: Uncharted Wilderness"}
-              {regionHealth >= 25 && regionHealth < 50 && "Stage 1: First Settlements (25%)"}
-              {regionHealth >= 50 && regionHealth < 75 && "Stage 2: Agricultural Bloom (50%)"}
-              {regionHealth >= 75 && regionHealth < 95 && "Stage 3: Connected Infrastructure (75%)"}
-              {regionHealth >= 95 && "Stage 4: Thriving Eco-Civilisation (100%)"}
+        <div className="flex items-center gap-3">
+          {onStartRandom && (
+            <button
+              onClick={onStartRandom}
+              className="px-4 py-2 rounded-2xl bg-yellow-300 hover:bg-yellow-400 border-2.5 border-slate-900 text-slate-950 font-black text-xs sm:text-sm shadow-[3px_3px_0px_0px_#0f172a] flex items-center gap-1.5 active:translate-x-0.5 active:translate-y-0.5 cursor-pointer transition-transform hover:scale-105"
+              title="Teacher Quick Launch: Pick a random mission"
+            >
+              <span className="text-base">🎲</span>
+              <span>RANDOM MISSION</span>
+            </button>
+          )}
+
+          {/* Region Evolution Pill */}
+          <div className="flex items-center gap-3 bg-white border-2.5 border-slate-900 px-4 py-2 rounded-2xl shadow-[4px_4px_0px_0px_#0f172a]">
+            <div className="text-left">
+              <div className="text-[10px] uppercase font-black text-slate-600 tracking-wider">Region Evolution</div>
+              <div className="text-xs sm:text-sm font-black text-emerald-700">
+                {regionHealth < 25 && "Stage 0: Uncharted Wilderness"}
+                {regionHealth >= 25 && regionHealth < 50 && "Stage 1: First Settlements (25%)"}
+                {regionHealth >= 50 && regionHealth < 75 && "Stage 2: Agricultural Bloom (50%)"}
+                {regionHealth >= 75 && regionHealth < 95 && "Stage 3: Connected Infrastructure (75%)"}
+                {regionHealth >= 95 && "Stage 4: Thriving Eco-Civilisation (100%)"}
+              </div>
             </div>
-          </div>
-          <div className="text-2xl">
-            {regionHealth < 25 ? "⛰️" : regionHealth < 50 ? "🏘️" : regionHealth < 75 ? "🌾" : "🌟"}
+            <div className="text-2xl">
+              {regionHealth < 25 ? "⛰️" : regionHealth < 50 ? "🏘️" : regionHealth < 75 ? "🌾" : "🌟"}
+            </div>
           </div>
         </div>
       </div>
@@ -463,11 +466,11 @@ export const MainGameMap: React.FC<Props> = ({
       <div className="w-full max-w-7xl mt-3 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-800 font-bold bg-white p-3 rounded-2xl border-2.5 border-slate-900 shadow-[4px_4px_0px_0px_#0f172a]">
         <div className="flex items-center gap-2">
           <Compass className="w-4 h-4 text-emerald-600" />
-          <span>Completed Missions: <strong className="text-slate-950 font-black">{completedMissions.length} / 5</strong></span>
+          <span>Completed Missions: <strong className="text-slate-950 font-black">{completedMissions.length} / 4</strong></span>
         </div>
 
         <div className="flex items-center gap-2">
-          {completedMissions.length === 5 && (
+          {completedMissions.length >= 4 && (
             <button
               onClick={() => onSelectMission('restore')}
               className="px-5 py-2 rounded-2xl bg-yellow-300 hover:bg-yellow-400 border-2.5 border-slate-900 text-slate-950 font-black shadow-[3px_3px_0px_0px_#0f172a] flex items-center gap-1.5 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none cursor-pointer animate-bounce"

@@ -26,7 +26,7 @@ export const TeamSelect: React.FC<Props> = ({ onContinue }) => {
           MEET THE TWO COMPETING TEAMS
         </h2>
         <p className="text-slate-800 text-sm sm:text-base font-bold max-w-2xl mx-auto mb-8">
-          This game is designed for the interactive smart board. Both teams will play simultaneously, alternating turns to answer challenges, place buildings, and restore the geographical region!
+          This game is designed for the interactive smart board. Both teams will play simultaneously, alternating turns to answer challenges, solve scenarios, and restore the geographical region!
         </p>
 
         {/* 2 Teams Face-off Display with VS in Center */}
@@ -47,21 +47,21 @@ export const TeamSelect: React.FC<Props> = ({ onContinue }) => {
                 TEAM TERRAFORMERS
               </h3>
               <p className="text-sm font-black text-blue-800 mb-4 tracking-wide">
-                Explore • Plan • Build
+                Explore • Plan • Discover
               </p>
 
               <div className="bg-white p-4 rounded-2xl border-2 border-slate-900 shadow-[3px_3px_0px_0px_#0f172a] mb-4 flex items-center gap-3">
                 <div className="text-4xl">🧑‍🎓</div>
                 <div className="text-xs text-slate-800 font-bold leading-relaxed">
                   <strong className="text-blue-900 block text-sm font-black">Geography Planners</strong>
-                  Equipped with topographic relief maps, contour surveying tools, and architectural grids.
+                  Equipped with topographic relief maps, contour surveying tools, and regional analysis grids.
                 </div>
               </div>
 
               <ul className="text-xs sm:text-sm text-slate-800 space-y-2 mb-4 font-bold">
                 <li className="flex items-center gap-2">✓ Masters elevations, contours & slope gradients</li>
-                <li className="flex items-center gap-2">✓ Plans optimal road corridors, canals & ports</li>
-                <li className="flex items-center gap-2">✓ Strategic placement of settlements and farms</li>
+                <li className="flex items-center gap-2">✓ Analyzes fertile river valleys and trade corridors</li>
+                <li className="flex items-center gap-2">✓ Strategic management of landforms and natural resources</li>
               </ul>
             </div>
 

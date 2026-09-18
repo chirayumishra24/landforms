@@ -167,7 +167,7 @@ export const Mission4Livelihoods: React.FC<Props> = ({
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-200 text-purple-950 text-xs font-black uppercase tracking-wider mb-1 border-2 border-slate-900 shadow-[2px_2px_0px_0px_#0f172a]">
               <Briefcase className="w-3.5 h-3.5 text-purple-900" />
-              <span>Mission 4 of 5 • Economic Geography</span>
+              <span>Mission 3 of 4 • Economic Geography</span>
             </div>
             <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-slate-950 flex items-center gap-2">
               <span>💼 LAND & LIVELIHOODS</span>
@@ -191,7 +191,7 @@ export const Mission4Livelihoods: React.FC<Props> = ({
                   : 'bg-white hover:bg-amber-100 text-slate-900'
               }`}
             >
-              <span>{isMissionFinished ? "COMPLETE MISSION ➔" : "PROCEED TO MISSION 5 ➔"}</span>
+              <span>{isMissionFinished ? "COMPLETE MISSION ➔" : "PROCEED TO MISSION 4 ➔"}</span>
             </button>
           </div>
         </div>

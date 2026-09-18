@@ -18,7 +18,7 @@ export function useGameState() {
     terraformers: {
       id: 'terraformers',
       name: 'Team A (Terraformers)',
-      tagline: 'Explore • Plan • Build',
+      tagline: 'Explore • Plan • Discover',
       color: '#3b82f6',
       points: 0,
       stats: { knowledge: 0, planning: 0, adaptation: 0, decisions: 0 }
@@ -41,14 +41,13 @@ export function useGameState() {
 
   // Region health calculated from completed milestones
   const calculateRegionHealth = useCallback(() => {
-    let health = 15; // baseline starting health
-    health += completedMissions.length * 12;
-    health += Math.min(placedBuildings.length * 4, 20);
+    let health = 16; // baseline starting health
+    health += completedMissions.length * 16;
     if (routeConnected) health += 10;
     const completedRestores = restorationState.filter(r => r.isComplete).length;
     health += completedRestores * 5;
     return Math.min(health, 100);
-  }, [completedMissions, placedBuildings, routeConnected, restorationState]);
+  }, [completedMissions, routeConnected, restorationState]);
 
   const regionHealth = calculateRegionHealth();
 
@@ -106,7 +105,7 @@ export function useGameState() {
       terraformers: {
         id: 'terraformers',
         name: 'Team Terraformers',
-        tagline: 'Explore • Plan • Build',
+        tagline: 'Explore • Plan • Discover',
         color: '#3b82f6',
         points: 0,
         stats: { knowledge: 0, planning: 0, adaptation: 0, decisions: 0 }
